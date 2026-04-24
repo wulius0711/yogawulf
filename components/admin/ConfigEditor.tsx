@@ -4,9 +4,10 @@ import type { YogaConfig } from "@/lib/types";
 
 interface Props {
   initialConfig: YogaConfig;
+  slug: string;
 }
 
-type Tab = "firma" | "formular" | "passwort";
+type Tab = "firma" | "formular" | "passwort" | "einbetten";
 
 function Section({ title, children }: { title: string; children: React.ReactNode }) {
   return (
@@ -25,6 +26,36 @@ function Section({ title, children }: { title: string; children: React.ReactNode
   );
 }
 
+function EmbedTab({ slug }: { slug: string }) {
+  const origin = typeof window !== "undefined" ? window.location.origin : "https://deine-domain.com";
+  const src = `${origin}/?kunde=${slug}`;
+
+  const snippet = `<iframe id="yogawulf-widget" src="${src}" width="100%" frameborder="0" style="border:none;display:block" scrolling="no"></iframe>
+<script>window.addEventListener('message',function(e){var f=document.getElementById('yogawulf-widget');if(!f||!e.data||e.data.type!=='yogawulf-resize')return;f.style.height=e.data.height+'px';if(e.data.scrollTop){var t=f.getBoundingClientRect().top+window.pageYOffset;window.scrollTo({top:t,behavior:'smooth'});}});<\/script>`;
+
+  return (
+    <div style={{ background: "var(--surface)", border: "1px solid var(--border)", borderRadius: "var(--radius)", padding: "1.5rem", display: "flex", flexDirection: "column", gap: "1rem" }}>
+      <p style={{ margin: 0, fontSize: "0.88rem", color: "var(--muted)" }}>
+        Diesen Code in deine Website einfügen (z.B. im HTML-Editor deines CMS):
+      </p>
+      <textarea
+        readOnly
+        value={snippet}
+        rows={6}
+        onClick={(e) => (e.target as HTMLTextAreaElement).select()}
+        style={{ fontFamily: "monospace", fontSize: "0.78rem", resize: "vertical", background: "var(--bg2)", color: "var(--text)" }}
+      />
+      <button
+        type="button"
+        onClick={() => navigator.clipboard.writeText(snippet)}
+        style={{ alignSelf: "flex-end", padding: "0.55rem 1.25rem", background: "var(--primary)", color: "var(--btn-text)", border: "none", borderRadius: "var(--radius-sm)", fontWeight: 600, cursor: "pointer", fontSize: "0.85rem" }}
+      >
+        Kopieren
+      </button>
+    </div>
+  );
+}
+
 function Field({ label, children }: { label: string; children: React.ReactNode }) {
   return (
     <div style={{ marginBottom: "1rem" }}>
@@ -34,7 +65,7 @@ function Field({ label, children }: { label: string; children: React.ReactNode }
   );
 }
 
-export default function ConfigEditor({ initialConfig }: Props) {
+export default function ConfigEditor({ initialConfig, slug }: Props) {
   const [config, setConfig] = useState<YogaConfig>(initialConfig);
   const [tab, setTab] = useState<Tab>("firma");
   const [saving, setSaving] = useState(false);
@@ -181,6 +212,7 @@ export default function ConfigEditor({ initialConfig }: Props) {
       >
         <button style={tabStyle("firma")} onClick={() => setTab("firma")}>Firma</button>
         <button style={tabStyle("formular")} onClick={() => setTab("formular")}>Formular</button>
+        <button style={tabStyle("einbetten")} onClick={() => setTab("einbetten")}>Einbetten</button>
         <button style={tabStyle("passwort")} onClick={() => setTab("passwort")}>Passwort</button>
       </div>
 
@@ -197,33 +229,50 @@ export default function ConfigEditor({ initialConfig }: Props) {
           </Section>
 
           <Section title="Design">
-            <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "1rem" }}>
-              <Field label="Primärfarbe">
-                <div style={{ display: "flex", gap: "0.5rem", alignItems: "center" }}>
-                  <input type="color" value={config.company.primaryColor} onChange={(e) => setCompany("primaryColor", e.target.value)} style={{ width: "3rem", height: "2.5rem", padding: "0.2rem", cursor: "pointer" }} />
-                  <input type="text" value={config.company.primaryColor} onChange={(e) => setCompany("primaryColor", e.target.value)} style={{ flex: 1 }} />
-                </div>
-              </Field>
-              <Field label="Akzentfarbe">
-                <div style={{ display: "flex", gap: "0.5rem", alignItems: "center" }}>
-                  <input type="color" value={config.company.accentColor} onChange={(e) => setCompany("accentColor", e.target.value)} style={{ width: "3rem", height: "2.5rem", padding: "0.2rem", cursor: "pointer" }} />
-                  <input type="text" value={config.company.accentColor} onChange={(e) => setCompany("accentColor", e.target.value)} style={{ flex: 1 }} />
-                </div>
-              </Field>
-            </div>
+            <Field label="Primärfarbe">
+              <div style={{ display: "flex", gap: "0.5rem", alignItems: "center" }}>
+                <input type="color" value={config.company.primaryColor} onChange={(e) => setCompany("primaryColor", e.target.value)} style={{ width: "3rem", height: "2.5rem", padding: "0.2rem", cursor: "pointer" }} />
+                <input type="text" value={config.company.primaryColor} onChange={(e) => setCompany("primaryColor", e.target.value)} style={{ flex: 1 }} />
+              </div>
+            </Field>
           </Section>
         </>
       )}
 
       {tab === "formular" && (
         <Section title="Formular">
-          <Field label="Formular-Titel">
-            <input type="text" value={config.formTitle} onChange={(e) => set("formTitle", e.target.value)} />
+          <Field label="Formular-Titel (optional, leer lassen zum Ausblenden)">
+            <input type="text" value={config.formTitle} onChange={(e) => set("formTitle", e.target.value)} placeholder="z.B. Du hast Interesse an einem Retreat bei uns?" />
+          </Field>
+          <Field label="Hintergrundfarbe (leer = transparent)">
+            <div style={{ display: "flex", gap: "0.5rem", alignItems: "center" }}>
+              <input type="color" value={config.formBgColor || "#f5f0e8"} onChange={(e) => set("formBgColor", e.target.value)} style={{ width: "3rem", height: "2.5rem", padding: "0.2rem", cursor: "pointer" }} />
+              <input type="text" value={config.formBgColor ?? ""} onChange={(e) => set("formBgColor", e.target.value)} placeholder="transparent" style={{ flex: 1 }} />
+              {config.formBgColor && (
+                <button type="button" onClick={() => set("formBgColor", "")} style={{ padding: "0.5rem 0.75rem", border: "1px solid var(--border)", borderRadius: "var(--radius-sm)", background: "none", color: "var(--muted)", cursor: "pointer", fontSize: "0.8rem", whiteSpace: "nowrap" }}>
+                  Zurücksetzen
+                </button>
+              )}
+            </div>
+          </Field>
+          <Field label="Schriftart Titel">
+            <select value={config.formTitleFont ?? "Cormorant Garamond"} onChange={(e) => set("formTitleFont", e.target.value)}>
+              <option value="Cormorant Garamond">Cormorant Garamond – elegant, dünn</option>
+              <option value="Playfair Display">Playfair Display – klassisch, serif</option>
+              <option value="Lora">Lora – warm, lesbar</option>
+              <option value="DM Serif Display">DM Serif Display – modern, markant</option>
+              <option value="EB Garamond">EB Garamond – zeitlos, fein</option>
+              <option value="Georgia, serif">Georgia – systemfont, schlicht</option>
+            </select>
           </Field>
           <OptionsEditor field="verpflegungOptions" label="Verpflegung-Optionen" />
           <OptionsEditor field="zimmerwunschOptions" label="Zimmerwunsch-Optionen" />
           <OptionsEditor field="abrechnungOptions" label="Abrechnungs-Optionen" />
         </Section>
+      )}
+
+      {tab === "einbetten" && (
+        <EmbedTab slug={slug} />
       )}
 
       {tab === "passwort" && (
@@ -245,7 +294,7 @@ export default function ConfigEditor({ initialConfig }: Props) {
 
       {/* Save bar (only for firma/formular tabs) */}
       {tab !== "passwort" && (
-        <div style={{ display: "flex", alignItems: "center", gap: "1rem", marginTop: "1rem" }}>
+        <div style={{ display: "flex", alignItems: "center", justifyContent: "flex-end", gap: "1rem", marginTop: "1rem" }}>
           <button
             onClick={handleSave}
             disabled={saving}

@@ -8,9 +8,10 @@ export interface YogaConfig {
     website: string;
     address: string;
     primaryColor: string;
-    accentColor: string;
   };
   formTitle: string;
+  formTitleFont?: string;
+  formBgColor?: string;
   verpflegungOptions: string[];
   zimmerwunschOptions: string[];
   abrechnungOptions: string[];
@@ -19,18 +20,21 @@ export interface YogaConfig {
 
 export interface BlockedDateEntry {
   id: string;
-  startDate: string; // ISO string
-  endDate: string;   // ISO string
+  startDate: string;
+  endDate: string;
   label: string;
+  type: "blocked" | "event";
+  color: string;
 }
 
 export interface InquiryFormData {
   artTitel: string;
   nameGruppenleitung: string;
-  gruppengroesse: string;
-  datum: string;
+  datumVon: string;
+  datumBis: string;
   email: string;
-  veranstaltungBeginnEnde: string;
+  zeitVon: string;
+  zeitBis: string;
   personenAnzahl: string;
   leiterinnen: string;
   bestuhlung: boolean | null;

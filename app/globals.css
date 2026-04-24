@@ -28,6 +28,11 @@
   --color-foreground: var(--text);
 }
 
+html, body {
+  height: fit-content;
+  min-height: unset;
+}
+
 body {
   background: var(--bg);
   color: var(--text);
@@ -75,4 +80,16 @@ label {
   font-size: 0.85rem;
   color: var(--muted);
   margin-bottom: 0.35rem;
+}
+
+button {
+  transition: transform 0.15s ease, box-shadow 0.15s ease, opacity 0.15s ease;
+}
+button:hover:not(:disabled) {
+  transform: translateY(-1px);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.12);
+}
+button:active:not(:disabled) {
+  transform: scale(0.97);
+  box-shadow: none;
 }

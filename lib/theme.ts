@@ -7,11 +7,6 @@ function hexToRgb(hex: string): [number, number, number] {
   ];
 }
 
-function lighten(hex: string, amount: number): string {
-  const [r, g, b] = hexToRgb(hex);
-  const m = (c: number) => Math.round(c + (255 - c) * amount);
-  return `rgb(${m(r)},${m(g)},${m(b)})`;
-}
 
 function rgba(hex: string, alpha: number): string {
   const [r, g, b] = hexToRgb(hex);
@@ -32,16 +27,15 @@ function luminance(hex: string): number {
   return 0.2126 * r + 0.7152 * g + 0.0722 * b;
 }
 
-export function buildThemeVars(primary: string, accent: string): Record<string, string> {
+export function buildThemeVars(primary: string): Record<string, string> {
   const btnText = luminance(primary) > 0.35 ? "#111111" : "#ffffff";
   return {
-    "--primary":       primary,
-    "--primary-dark":  darken(primary, 0.2),
-    "--primary-tint":  rgba(primary, 0.10),
-    "--primary-dim":   rgba(primary, 0.18),
-    "--accent":        accent,
-    "--btn-text":      btnText,
-    "--blocked-bg":    primary,
-    "--blocked-text":  btnText,
+    "--primary":      primary,
+    "--primary-dark": darken(primary, 0.2),
+    "--primary-tint": rgba(primary, 0.10),
+    "--primary-dim":  rgba(primary, 0.18),
+    "--btn-text":     btnText,
+    "--blocked-bg":   primary,
+    "--blocked-text": btnText,
   };
 }

@@ -2,45 +2,68 @@ import { NextRequest, NextResponse } from "next/server";
 import { getSession } from "@/lib/auth";
 import { prisma } from "@/lib/db";
 
+function serialize(b: { id: string; startDate: Date; endDate: Date; label: string; type: string; color: string; [key: string]: unknown }) {
+  return {
+    id: b.id,
+    startDate: b.startDate.toISOString(),
+    endDate: b.endDate.toISOString(),
+    label: b.label,
+    type: b.type,
+    color: b.color,
+  };
+}
+
 export async function GET() {
   const session = await getSession();
   if (!session) return NextResponse.json({ error: "Nicht eingeloggt" }, { status: 401 });
 
-  const blocked = await prisma.blockedDate.findMany({
+  const entries = await prisma.blockedDate.findMany({
     where: { clientId: session.clientId },
     orderBy: { startDate: "asc" },
   });
 
-  return NextResponse.json(
-    blocked.map((b) => ({
-      id: b.id,
-      startDate: b.startDate.toISOString(),
-      endDate: b.endDate.toISOString(),
-      label: b.label,
-    }))
-  );
+  return NextResponse.json(entries.map(serialize));
 }
 
 export async function POST(req: NextRequest) {
   const session = await getSession();
   if (!session) return NextResponse.json({ error: "Nicht eingeloggt" }, { status: 401 });
 
-  const { startDate, endDate, label } = await req.json();
+  const { startDate, endDate, label, type, color } = await req.json();
   const entry = await prisma.blockedDate.create({
     data: {
       clientId: session.clientId,
       startDate: new Date(startDate),
       endDate: new Date(endDate),
-      label: label ?? "nicht verfügbar",
+      label: label ?? (type === "event" ? "Event" : "nicht verfügbar"),
+      type: type ?? "blocked",
+      color: color ?? "",
     },
   });
 
-  return NextResponse.json({
-    id: entry.id,
-    startDate: entry.startDate.toISOString(),
-    endDate: entry.endDate.toISOString(),
-    label: entry.label,
+  return NextResponse.json(serialize(entry));
+}
+
+export async function PATCH(req: NextRequest) {
+  const session = await getSession();
+  if (!session) return NextResponse.json({ error: "Nicht eingeloggt" }, { status: 401 });
+
+  const { id, startDate, endDate, label, type, color } = await req.json();
+  const entry = await prisma.blockedDate.findFirst({ where: { id, clientId: session.clientId } });
+  if (!entry) return NextResponse.json({ error: "Nicht gefunden" }, { status: 404 });
+
+  const updated = await prisma.blockedDate.update({
+    where: { id },
+    data: {
+      startDate: new Date(startDate),
+      endDate: new Date(endDate),
+      label: label ?? entry.label,
+      type: type ?? entry.type,
+      color: color ?? entry.color,
+    },
   });
+
+  return NextResponse.json(serialize(updated));
 }
 
 export async function DELETE(req: NextRequest) {
@@ -48,9 +71,7 @@ export async function DELETE(req: NextRequest) {
   if (!session) return NextResponse.json({ error: "Nicht eingeloggt" }, { status: 401 });
 
   const { id } = await req.json();
-  await prisma.blockedDate.deleteMany({
-    where: { id, clientId: session.clientId },
-  });
+  await prisma.blockedDate.deleteMany({ where: { id, clientId: session.clientId } });
 
   return NextResponse.json({ ok: true });
 }

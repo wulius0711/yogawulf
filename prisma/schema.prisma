@@ -12,6 +12,7 @@ model Client {
   config       String        // JSON string (YogaConfig)
   users        User[]
   blockedDates BlockedDate[]
+  inquiries    Inquiry[]
   createdAt    DateTime      @default(now())
   updatedAt    DateTime      @updatedAt
 }
@@ -32,5 +33,16 @@ model BlockedDate {
   startDate DateTime
   endDate   DateTime
   label     String   @default("nicht verfügbar")
+  type      String   @default("blocked") // "blocked" | "event"
+  color     String   @default("")        // optional hex color for events
+  createdAt DateTime @default(now())
+}
+
+model Inquiry {
+  id        String   @id @default(cuid())
+  clientId  String
+  client    Client   @relation(fields: [clientId], references: [id])
+  data      String   // JSON string of InquiryFormData
+  status    String   @default("neu") // "neu" | "in_pruefung" | "bestaetigt" | "abgelehnt"
   createdAt DateTime @default(now())
 }
