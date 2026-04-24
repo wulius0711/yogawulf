@@ -20,6 +20,7 @@ export default async function AdminLayout({ children }: { children: React.ReactN
   return (
     <div style={{ minHeight: "100vh", background: "var(--bg)" }}>
       <nav
+        className="admin-nav-bar"
         style={{
           borderBottom: "1px solid var(--border)",
           background: "var(--surface)",

@@ -13,7 +13,7 @@ export default function Step2Gruppe({ config }: Props) {
 
   return (
     <div style={{ display: "flex", flexDirection: "column", gap: "1.25rem" }}>
-      <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "1rem" }}>
+      <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(min(180px, 100%), 1fr))", gap: "1rem" }}>
         <div>
           <label>Name Gruppenleitung *</label>
           <input type="text" value={form.nameGruppenleitung} onChange={(e) => setField("nameGruppenleitung", e.target.value)} autoFocus />
@@ -25,7 +25,7 @@ export default function Step2Gruppe({ config }: Props) {
       </div>
 
       {show(config, "telefon") && (
-        <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "1rem" }}>
+        <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(min(180px, 100%), 1fr))", gap: "1rem" }}>
           <div>
             <label>Telefon</label>
             <input type="tel" placeholder="+43 …" value={form.telefon} onChange={(e) => setField("telefon", e.target.value)} />
@@ -34,7 +34,7 @@ export default function Step2Gruppe({ config }: Props) {
         </div>
       )}
 
-      <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "1rem" }}>
+      <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(min(180px, 100%), 1fr))", gap: "1rem" }}>
         <div>
           <label>Anzahl Teilnehmer:innen</label>
           <input type="text" placeholder="z.B. 12" value={form.personenAnzahl} onChange={(e) => setField("personenAnzahl", e.target.value)} />
@@ -46,7 +46,7 @@ export default function Step2Gruppe({ config }: Props) {
       </div>
 
       {show(config, "sprache") && (
-        <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "1rem" }}>
+        <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(min(180px, 100%), 1fr))", gap: "1rem" }}>
           <div>
             <label>Sprache der Gruppe</label>
             <select value={form.sprache} onChange={(e) => setField("sprache", e.target.value)}>

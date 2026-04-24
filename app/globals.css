@@ -93,3 +93,15 @@ button:active:not(:disabled) {
   transform: scale(0.97);
   box-shadow: none;
 }
+
+/* Responsive helpers */
+@media (max-width: 440px) {
+  .step-label { display: none !important; }
+  .step-conn  { margin-bottom: 0 !important; }
+}
+
+@media (max-width: 520px) {
+  .admin-nav { flex-wrap: wrap; gap: 0.6rem !important; justify-content: center !important; padding: 0.6rem 1rem !important; }
+  .admin-nav-bar { height: auto !important; }
+  .config-tabs { flex-wrap: wrap; }
+}

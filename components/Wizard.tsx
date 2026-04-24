@@ -115,6 +115,7 @@ export default function Wizard({ config, slug }: Props) {
                   {done ? "✓" : n}
                 </div>
                 <span
+                  className="step-label"
                   style={{
                     fontSize: "0.7rem",
                     color: active ? "var(--primary)" : "var(--muted)",
@@ -127,6 +128,7 @@ export default function Wizard({ config, slug }: Props) {
               </div>
               {n < TOTAL_STEPS && (
                 <div
+                  className="step-conn"
                   style={{
                     flex: 1,
                     height: "2px",

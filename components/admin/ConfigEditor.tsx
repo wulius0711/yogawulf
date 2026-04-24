@@ -211,6 +211,7 @@ export default function ConfigEditor({ initialConfig, slug }: Props) {
     <div>
       {/* Tab nav */}
       <div
+        className="config-tabs"
         style={{
           display: "flex",
           borderBottom: "1px solid var(--border)",
