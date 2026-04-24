@@ -34,16 +34,22 @@ export default function Step2Gruppe({ config }: Props) {
         </div>
       )}
 
-      <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(min(180px, 100%), 1fr))", gap: "1rem" }}>
-        <div>
-          <label>Anzahl Teilnehmer:innen</label>
-          <input type="text" placeholder="z.B. 12" value={form.personenAnzahl} onChange={(e) => setField("personenAnzahl", e.target.value)} />
+      {(show(config, "personenAnzahl") || show(config, "leiterinnen")) && (
+        <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(min(180px, 100%), 1fr))", gap: "1rem" }}>
+          {show(config, "personenAnzahl") && (
+            <div>
+              <label>Anzahl Teilnehmer:innen</label>
+              <input type="text" placeholder="z.B. 12" value={form.personenAnzahl} onChange={(e) => setField("personenAnzahl", e.target.value)} />
+            </div>
+          )}
+          {show(config, "leiterinnen") && (
+            <div>
+              <label>Leiter:innen</label>
+              <input type="text" placeholder="Namen der Kursleiter:innen" value={form.leiterinnen} onChange={(e) => setField("leiterinnen", e.target.value)} />
+            </div>
+          )}
         </div>
-        <div>
-          <label>Leiter:innen</label>
-          <input type="text" placeholder="Namen der Kursleiter:innen" value={form.leiterinnen} onChange={(e) => setField("leiterinnen", e.target.value)} />
-        </div>
-      </div>
+      )}
 
       {show(config, "sprache") && (
         <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(min(180px, 100%), 1fr))", gap: "1rem" }}>
