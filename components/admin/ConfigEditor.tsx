@@ -30,8 +30,8 @@ function EmbedTab({ slug }: { slug: string }) {
   const origin = typeof window !== "undefined" ? window.location.origin : "https://deine-domain.com";
   const src = `${origin}/?kunde=${slug}`;
 
-  const snippet = `<iframe id="yogawulf-widget" src="${src}" width="100%" frameborder="0" style="border:none;display:block" scrolling="no"></iframe>
-<script>window.addEventListener('message',function(e){var f=document.getElementById('yogawulf-widget');if(!f||!e.data||e.data.type!=='yogawulf-resize')return;f.style.height=e.data.height+'px';if(e.data.scrollTop){var t=f.getBoundingClientRect().top+window.pageYOffset;window.scrollTo({top:t,behavior:'smooth'});}});<\/script>`;
+  const snippet = `<iframe id="eventwulf-widget" src="${src}" width="100%" frameborder="0" style="border:none;display:block" scrolling="no"></iframe>
+<script>window.addEventListener('message',function(e){var f=document.getElementById('eventwulf-widget');if(!f||!e.data||e.data.type!=='eventwulf-resize')return;f.style.height=e.data.height+'px';if(e.data.scrollTop){var t=f.getBoundingClientRect().top+window.pageYOffset;window.scrollTo({top:t,behavior:'smooth'});}});<\/script>`;
 
   return (
     <div style={{ background: "var(--surface)", border: "1px solid var(--border)", borderRadius: "var(--radius)", padding: "1.5rem", display: "flex", flexDirection: "column", gap: "1rem" }}>

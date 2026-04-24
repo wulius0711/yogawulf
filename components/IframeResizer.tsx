@@ -13,7 +13,7 @@ export default function IframeResizer() {
       rafRef.current = requestAnimationFrame(() => {
         const root = document.getElementById("embed-root");
         const height = root ? root.offsetHeight : document.body.offsetHeight;
-        window.parent.postMessage({ type: "yogawulf-resize", height, scrollTop }, "*");
+        window.parent.postMessage({ type: "eventwulf-resize", height, scrollTop }, "*");
       });
     };
 
