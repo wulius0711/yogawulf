@@ -47,3 +47,24 @@ export async function POST(req: NextRequest) {
 
   return NextResponse.json({ id: org.id, slug });
 }
+
+export async function DELETE(req: NextRequest) {
+  const session = await getSession();
+  if (!session || session.clientSlug !== SUPERADMIN) {
+    return NextResponse.json({ error: "Kein Zugriff" }, { status: 403 });
+  }
+
+  const { id } = await req.json();
+
+  // Cascade: delete inquiries + blockedDates for all clients of this org, then clients, users, org
+  const clients = await prisma.client.findMany({ where: { organizationId: id }, select: { id: true } });
+  const clientIds = clients.map((c) => c.id);
+
+  await prisma.inquiry.deleteMany({ where: { clientId: { in: clientIds } } });
+  await prisma.blockedDate.deleteMany({ where: { clientId: { in: clientIds } } });
+  await prisma.client.deleteMany({ where: { organizationId: id } });
+  await prisma.user.deleteMany({ where: { organizationId: id } });
+  await prisma.organization.delete({ where: { id } });
+
+  return NextResponse.json({ ok: true });
+}
