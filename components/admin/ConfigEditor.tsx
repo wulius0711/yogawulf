@@ -281,23 +281,37 @@ export default function ConfigEditor({ initialConfig, slug }: Props) {
           <div style={{ marginTop: "0.5rem" }}>
             <div style={{ fontSize: "0.85rem", color: "var(--muted)", marginBottom: "0.75rem" }}>Optionale Felder ein-/ausblenden</div>
             {([
-              ["telefon",        "Telefon (Gruppenleitung)"],
-              ["sprache",        "Sprache der Gruppe"],
-              ["anreise",        "Anreise"],
-              ["barrierefreiheit", "Besondere Bedürfnisse / Barrierefreiheit"],
-              ["budget",         "Budgetrahmen"],
-              ["quelle",         "Wie habt ihr uns gefunden?"],
-            ] as [keyof NonNullable<YogaConfig["formFields"]>, string][]).map(([field, label]) => (
-              <label key={field} style={{ display: "flex", alignItems: "center", gap: "0.6rem", marginBottom: "0.5rem", cursor: "pointer", fontSize: "0.88rem", color: "var(--text)", fontWeight: 400 }}>
-                <input
-                  type="checkbox"
-                  checked={fieldEnabled(field)}
-                  onChange={(e) => setFormField(field, e.target.checked)}
-                  style={{ width: "auto", cursor: "pointer" }}
-                />
-                {label}
-              </label>
-            ))}
+              [null,               "Schritt 1 – Veranstaltung"],
+              ["uhrzeiten",        "Uhrzeiten (Beginn / Ende)"],
+              [null,               "Schritt 2 – Gruppe"],
+              ["personenAnzahl",   "Anzahl Teilnehmer:innen"],
+              ["leiterinnen",      "Leiter:innen"],
+              ["telefon",          "Telefon"],
+              ["sprache",          "Sprache der Gruppe"],
+              [null,               "Schritt 3 – Ausstattung"],
+              ["bestuhlung",       "Bestuhlung"],
+              ["tische",           "Tische"],
+              ["sonstigesEquipment","Sonstiges Equipment"],
+              [null,               "Schritt 4 – Verpflegung"],
+              ["verpflegung",      "Verpflegung"],
+              ["zimmerwunsch",     "Zimmerwunsch"],
+              [null,               "Schritt 5 – Abschluss"],
+              ["wuenscheRahmenprogramm", "Wünsche Rahmenprogramm"],
+              ["abrechnung",       "Abrechnung"],
+              ["anreise",          "Anreise"],
+              ["barrierefreiheit", "Besondere Bedürfnisse"],
+              ["budget",           "Budgetrahmen"],
+              ["quelle",           "Wie habt ihr uns gefunden?"],
+            ] as [keyof NonNullable<YogaConfig["formFields"]> | null, string][]).map(([field, label], i) =>
+              field === null ? (
+                <div key={i} style={{ fontSize: "0.75rem", fontWeight: 600, color: "var(--muted)", marginTop: "0.75rem", marginBottom: "0.35rem", textTransform: "uppercase", letterSpacing: "0.05em" }}>{label}</div>
+              ) : (
+                <label key={field} style={{ display: "flex", alignItems: "center", gap: "0.6rem", marginBottom: "0.4rem", cursor: "pointer", fontSize: "0.88rem", color: "var(--text)", fontWeight: 400 }}>
+                  <input type="checkbox" checked={fieldEnabled(field)} onChange={(e) => setFormField(field, e.target.checked)} style={{ width: "auto", cursor: "pointer" }} />
+                  {label}
+                </label>
+              )
+            )}
           </div>
         </Section>
       )}

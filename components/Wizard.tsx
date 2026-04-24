@@ -149,9 +149,9 @@ export default function Wizard({ config, slug }: Props) {
 
       {/* Step content */}
       <div style={{ minHeight: "200px" }}>
-        {step === 1 && <Step1Veranstaltung slug={slug} />}
+        {step === 1 && <Step1Veranstaltung slug={slug} config={config} />}
         {step === 2 && <Step2Gruppe config={config} />}
-        {step === 3 && <Step3Ausstattung />}
+        {step === 3 && <Step3Ausstattung config={config} />}
         {step === 4 && <Step4Verpflegung config={config} />}
         {step === 5 && <Step5Abschluss config={config} />}
       </div>

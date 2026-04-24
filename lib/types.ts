@@ -1,6 +1,21 @@
 export interface FormFields {
+  // Step 1
+  uhrzeiten?: boolean;
+  // Step 2
+  personenAnzahl?: boolean;
+  leiterinnen?: boolean;
   telefon?: boolean;
   sprache?: boolean;
+  // Step 3
+  bestuhlung?: boolean;
+  tische?: boolean;
+  sonstigesEquipment?: boolean;
+  // Step 4
+  verpflegung?: boolean;
+  zimmerwunsch?: boolean;
+  // Step 5
+  wuenscheRahmenprogramm?: boolean;
+  abrechnung?: boolean;
   anreise?: boolean;
   barrierefreiheit?: boolean;
   budget?: boolean;
