@@ -231,14 +231,6 @@ export default function ConfigEditor({ initialConfig, slug }: Props) {
             <Field label="Benachrichtigungs-E-Mail"><input type="email" value={config.notifyEmail} onChange={(e) => set("notifyEmail", e.target.value)} /></Field>
           </Section>
 
-          <Section title="Design">
-            <Field label="Primärfarbe">
-              <div style={{ display: "flex", gap: "0.5rem", alignItems: "center" }}>
-                <input type="color" value={config.company.primaryColor} onChange={(e) => setCompany("primaryColor", e.target.value)} style={{ width: "3rem", height: "2.5rem", padding: "0.2rem", cursor: "pointer" }} />
-                <input type="text" value={config.company.primaryColor} onChange={(e) => setCompany("primaryColor", e.target.value)} style={{ flex: 1 }} />
-              </div>
-            </Field>
-          </Section>
         </>
       )}
 
@@ -246,6 +238,12 @@ export default function ConfigEditor({ initialConfig, slug }: Props) {
         <Section title="Formular">
           <Field label="Formular-Titel (optional, leer lassen zum Ausblenden)">
             <input type="text" value={config.formTitle} onChange={(e) => set("formTitle", e.target.value)} placeholder="z.B. Du hast Interesse an einem Retreat bei uns?" />
+          </Field>
+          <Field label="Primärfarbe">
+            <div style={{ display: "flex", gap: "0.5rem", alignItems: "center" }}>
+              <input type="color" value={config.company.primaryColor} onChange={(e) => setCompany("primaryColor", e.target.value)} style={{ width: "3rem", height: "2.5rem", padding: "0.2rem", cursor: "pointer" }} />
+              <input type="text" value={config.company.primaryColor} onChange={(e) => setCompany("primaryColor", e.target.value)} style={{ flex: 1 }} />
+            </div>
           </Field>
           <Field label="Hintergrundfarbe (leer = transparent)">
             <div style={{ display: "flex", gap: "0.5rem", alignItems: "center" }}>
