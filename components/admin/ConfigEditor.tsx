@@ -243,77 +243,83 @@ export default function ConfigEditor({ initialConfig, slug }: Props) {
       )}
 
       {tab === "formular" && (
-        <Section title="Formular">
-          <Field label="Formular-Titel (optional, leer lassen zum Ausblenden)">
-            <input type="text" value={config.formTitle} onChange={(e) => set("formTitle", e.target.value)} placeholder="z.B. Du hast Interesse an einem Retreat bei uns?" />
-          </Field>
-          <Field label="Primärfarbe">
-            <div style={{ display: "flex", gap: "0.5rem", alignItems: "center" }}>
-              <input type="color" value={config.company.primaryColor} onChange={(e) => setCompany("primaryColor", e.target.value)} style={{ width: "3rem", height: "2.5rem", padding: "0.2rem", cursor: "pointer" }} />
-              <input type="text" value={config.company.primaryColor} onChange={(e) => setCompany("primaryColor", e.target.value)} style={{ flex: 1 }} />
-            </div>
-          </Field>
-          <Field label="Hintergrundfarbe (leer = transparent)">
-            <div style={{ display: "flex", gap: "0.5rem", alignItems: "center" }}>
-              <input type="color" value={config.formBgColor || "#f5f0e8"} onChange={(e) => set("formBgColor", e.target.value)} style={{ width: "3rem", height: "2.5rem", padding: "0.2rem", cursor: "pointer" }} />
-              <input type="text" value={config.formBgColor ?? ""} onChange={(e) => set("formBgColor", e.target.value)} placeholder="transparent" style={{ flex: 1 }} />
-              {config.formBgColor && (
-                <button type="button" onClick={() => set("formBgColor", "")} style={{ padding: "0.5rem 0.75rem", border: "1px solid var(--border)", borderRadius: "var(--radius-sm)", background: "none", color: "var(--muted)", cursor: "pointer", fontSize: "0.8rem", whiteSpace: "nowrap" }}>
-                  Zurücksetzen
-                </button>
+        <>
+          <Section title="Formular">
+            <Field label="Formular-Titel (optional, leer lassen zum Ausblenden)">
+              <input type="text" value={config.formTitle} onChange={(e) => set("formTitle", e.target.value)} placeholder="z.B. Du hast Interesse an einem Retreat bei uns?" />
+            </Field>
+            <Field label="Primärfarbe">
+              <div style={{ display: "flex", gap: "0.5rem", alignItems: "center" }}>
+                <input type="color" value={config.company.primaryColor} onChange={(e) => setCompany("primaryColor", e.target.value)} style={{ width: "3rem", height: "2.5rem", padding: "0.2rem", cursor: "pointer" }} />
+                <input type="text" value={config.company.primaryColor} onChange={(e) => setCompany("primaryColor", e.target.value)} style={{ flex: 1 }} />
+              </div>
+            </Field>
+            <Field label="Hintergrundfarbe (leer = transparent)">
+              <div style={{ display: "flex", gap: "0.5rem", alignItems: "center" }}>
+                <input type="color" value={config.formBgColor || "#f5f0e8"} onChange={(e) => set("formBgColor", e.target.value)} style={{ width: "3rem", height: "2.5rem", padding: "0.2rem", cursor: "pointer" }} />
+                <input type="text" value={config.formBgColor ?? ""} onChange={(e) => set("formBgColor", e.target.value)} placeholder="transparent" style={{ flex: 1 }} />
+                {config.formBgColor && (
+                  <button type="button" onClick={() => set("formBgColor", "")} style={{ padding: "0.5rem 0.75rem", border: "1px solid var(--border)", borderRadius: "var(--radius-sm)", background: "none", color: "var(--muted)", cursor: "pointer", fontSize: "0.8rem", whiteSpace: "nowrap" }}>
+                    Zurücksetzen
+                  </button>
+                )}
+              </div>
+            </Field>
+            <Field label="Schriftart Titel">
+              <select value={config.formTitleFont ?? "Cormorant Garamond"} onChange={(e) => set("formTitleFont", e.target.value)}>
+                <option value="Cormorant Garamond">Cormorant Garamond – elegant, dünn</option>
+                <option value="Playfair Display">Playfair Display – klassisch, serif</option>
+                <option value="Lora">Lora – warm, lesbar</option>
+                <option value="DM Serif Display">DM Serif Display – modern, markant</option>
+                <option value="EB Garamond">EB Garamond – zeitlos, fein</option>
+                <option value="Georgia, serif">Georgia – systemfont, schlicht</option>
+              </select>
+            </Field>
+          </Section>
+
+          <Section title="Felder">
+            <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fill, minmax(190px, 1fr))", gap: "0.15rem 1.5rem" }}>
+              {([
+                [null,               "Schritt 1 – Veranstaltung"],
+                ["uhrzeiten",        "Uhrzeiten (Beginn / Ende)"],
+                [null,               "Schritt 2 – Gruppe"],
+                ["personenAnzahl",   "Anzahl Teilnehmer:innen"],
+                ["leiterinnen",      "Leiter:innen"],
+                ["telefon",          "Telefon"],
+                ["sprache",          "Sprache der Gruppe"],
+                [null,               "Schritt 3 – Ausstattung"],
+                ["bestuhlung",       "Bestuhlung"],
+                ["tische",           "Tische"],
+                ["sonstigesEquipment","Sonstiges Equipment"],
+                [null,               "Schritt 4 – Verpflegung"],
+                ["verpflegung",      "Verpflegung"],
+                ["zimmerwunsch",     "Zimmerwunsch"],
+                [null,               "Schritt 5 – Abschluss"],
+                ["wuenscheRahmenprogramm", "Wünsche Rahmenprogramm"],
+                ["abrechnung",       "Abrechnung"],
+                ["anreise",          "Anreise"],
+                ["barrierefreiheit", "Besondere Bedürfnisse"],
+                ["budget",           "Budgetrahmen"],
+                ["quelle",           "Wie habt ihr uns gefunden?"],
+              ] as [keyof NonNullable<YogaConfig["formFields"]> | null, string][]).map(([field, label], i) =>
+                field === null ? (
+                  <div key={i} style={{ gridColumn: "1 / -1", fontSize: "0.72rem", fontWeight: 600, color: "var(--muted)", marginTop: i === 0 ? 0 : "0.75rem", marginBottom: "0.2rem", textTransform: "uppercase", letterSpacing: "0.05em" }}>{label}</div>
+                ) : (
+                  <label key={field} style={{ display: "flex", alignItems: "center", gap: "0.5rem", padding: "0.3rem 0", cursor: "pointer", fontSize: "0.88rem", color: "var(--text)", fontWeight: 400 }}>
+                    <input type="checkbox" checked={fieldEnabled(field)} onChange={(e) => setFormField(field, e.target.checked)} style={{ width: "auto", cursor: "pointer", flexShrink: 0 }} />
+                    {label}
+                  </label>
+                )
               )}
             </div>
-          </Field>
-          <Field label="Schriftart Titel">
-            <select value={config.formTitleFont ?? "Cormorant Garamond"} onChange={(e) => set("formTitleFont", e.target.value)}>
-              <option value="Cormorant Garamond">Cormorant Garamond – elegant, dünn</option>
-              <option value="Playfair Display">Playfair Display – klassisch, serif</option>
-              <option value="Lora">Lora – warm, lesbar</option>
-              <option value="DM Serif Display">DM Serif Display – modern, markant</option>
-              <option value="EB Garamond">EB Garamond – zeitlos, fein</option>
-              <option value="Georgia, serif">Georgia – systemfont, schlicht</option>
-            </select>
-          </Field>
-          <OptionsEditor field="verpflegungOptions" label="Verpflegung-Optionen" />
-          <OptionsEditor field="zimmerwunschOptions" label="Zimmerwunsch-Optionen" />
-          <OptionsEditor field="abrechnungOptions" label="Abrechnungs-Optionen" />
 
-          <div style={{ marginTop: "0.5rem" }}>
-            <div style={{ fontSize: "0.85rem", color: "var(--muted)", marginBottom: "0.75rem" }}>Optionale Felder ein-/ausblenden</div>
-            {([
-              [null,               "Schritt 1 – Veranstaltung"],
-              ["uhrzeiten",        "Uhrzeiten (Beginn / Ende)"],
-              [null,               "Schritt 2 – Gruppe"],
-              ["personenAnzahl",   "Anzahl Teilnehmer:innen"],
-              ["leiterinnen",      "Leiter:innen"],
-              ["telefon",          "Telefon"],
-              ["sprache",          "Sprache der Gruppe"],
-              [null,               "Schritt 3 – Ausstattung"],
-              ["bestuhlung",       "Bestuhlung"],
-              ["tische",           "Tische"],
-              ["sonstigesEquipment","Sonstiges Equipment"],
-              [null,               "Schritt 4 – Verpflegung"],
-              ["verpflegung",      "Verpflegung"],
-              ["zimmerwunsch",     "Zimmerwunsch"],
-              [null,               "Schritt 5 – Abschluss"],
-              ["wuenscheRahmenprogramm", "Wünsche Rahmenprogramm"],
-              ["abrechnung",       "Abrechnung"],
-              ["anreise",          "Anreise"],
-              ["barrierefreiheit", "Besondere Bedürfnisse"],
-              ["budget",           "Budgetrahmen"],
-              ["quelle",           "Wie habt ihr uns gefunden?"],
-            ] as [keyof NonNullable<YogaConfig["formFields"]> | null, string][]).map(([field, label], i) =>
-              field === null ? (
-                <div key={i} style={{ fontSize: "0.75rem", fontWeight: 600, color: "var(--muted)", marginTop: "0.75rem", marginBottom: "0.35rem", textTransform: "uppercase", letterSpacing: "0.05em" }}>{label}</div>
-              ) : (
-                <label key={field} style={{ display: "flex", alignItems: "center", gap: "0.6rem", marginBottom: "0.4rem", cursor: "pointer", fontSize: "0.88rem", color: "var(--text)", fontWeight: 400 }}>
-                  <input type="checkbox" checked={fieldEnabled(field)} onChange={(e) => setFormField(field, e.target.checked)} style={{ width: "auto", cursor: "pointer" }} />
-                  {label}
-                </label>
-              )
-            )}
-          </div>
-        </Section>
+            <div style={{ borderTop: "1px solid var(--border)", marginTop: "1.25rem", paddingTop: "1.25rem" }}>
+              <OptionsEditor field="verpflegungOptions" label="Verpflegung-Optionen" />
+              <OptionsEditor field="zimmerwunschOptions" label="Zimmerwunsch-Optionen" />
+              <OptionsEditor field="abrechnungOptions" label="Abrechnungs-Optionen" />
+            </div>
+          </Section>
+        </>
       )}
 
       {tab === "einbetten" && (
