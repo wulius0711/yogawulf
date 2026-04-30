@@ -145,7 +145,7 @@ export default function AvailabilityEditor() {
           </p>
         )}
 
-        <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "1rem" }}>
+        <div className="ew-date-grid" style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "1rem" }}>
           <div>
             <label>Von</label>
             <input type="date" value={startDate} onChange={(e) => setStartDate(e.target.value)} required />
@@ -215,7 +215,7 @@ export default function AvailabilityEditor() {
           {list.length === 0 ? (
             <p style={{ padding: "1.25rem 1.5rem", color: "var(--muted)", fontSize: "0.85rem" }}>Noch keine Einträge.</p>
           ) : list.map((entry) => (
-            <div key={entry.id} style={{
+            <div key={entry.id} className="ew-entry-row" style={{
               display: "flex", alignItems: "center", padding: "0.8rem 1.5rem",
               borderBottom: "1px solid var(--border)", gap: "0.75rem",
               background: editingId === entry.id ? "var(--primary-tint)" : "transparent",
@@ -232,20 +232,22 @@ export default function AvailabilityEditor() {
                 {fmt(entry.startDate)} – {fmt(entry.endDate)}
               </span>
               <span style={{ fontSize: "0.85rem", color: "var(--muted)", flex: 1 }}>{entry.label}</span>
-              <button onClick={() => startEdit(entry)} style={{
-                padding: "0.28rem 0.65rem", border: "1px solid var(--border)",
-                borderRadius: "var(--radius-sm)", background: "none",
-                color: "var(--text)", cursor: "pointer", fontSize: "0.78rem",
-              }}>
-                Bearbeiten
-              </button>
-              <button onClick={() => handleDelete(entry.id)} style={{
-                padding: "0.28rem 0.65rem", border: "1px solid var(--border)",
-                borderRadius: "var(--radius-sm)", background: "none",
-                color: "#dc2626", cursor: "pointer", fontSize: "0.78rem",
-              }}>
-                Löschen
-              </button>
+              <div className="ew-entry-actions" style={{ display: "flex", gap: "0.5rem", flexShrink: 0 }}>
+                <button onClick={() => startEdit(entry)} style={{
+                  padding: "0.28rem 0.65rem", border: "1px solid var(--border)",
+                  borderRadius: "var(--radius-sm)", background: "none",
+                  color: "var(--text)", cursor: "pointer", fontSize: "0.78rem",
+                }}>
+                  Bearbeiten
+                </button>
+                <button onClick={() => handleDelete(entry.id)} style={{
+                  padding: "0.28rem 0.65rem", border: "1px solid var(--border)",
+                  borderRadius: "var(--radius-sm)", background: "none",
+                  color: "#dc2626", cursor: "pointer", fontSize: "0.78rem",
+                }}>
+                  Löschen
+                </button>
+              </div>
             </div>
           ))}
         </div>

@@ -108,7 +108,7 @@ export default function InquiryInbox() {
               <span style={{ fontSize: "0.78rem", color: "var(--muted)", flexShrink: 0 }}>
                 {d.datumVon ? fmtDate(d.datumVon) : "–"}
               </span>
-              <span style={{ fontSize: "0.75rem", color: "var(--muted)", flexShrink: 0 }}>
+              <span className="ew-inq-created" style={{ fontSize: "0.75rem", color: "var(--muted)", flexShrink: 0 }}>
                 {fmt(inq.createdAt)}
               </span>
               <span style={{ color: "var(--muted)", fontSize: "0.9rem" }}>{isOpen ? "▲" : "▼"}</span>
