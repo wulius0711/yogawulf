@@ -35,6 +35,25 @@ export default async function AdminLayout({ children }: { children: React.ReactN
             border-top: 1px solid var(--border);
           }
           .ew-main { padding: 1.25rem 1rem !important; }
+          .ew-preview { display: none !important; }
+        }
+        @media (min-width: 601px) {
+          .ew-body { display: flex; align-items: flex-start; }
+          .ew-content { flex: 1 1 0; min-width: 0; }
+          .ew-preview {
+            flex: 0 0 33vw;
+            width: 33vw;
+            position: sticky;
+            top: 0;
+            height: 100vh;
+            border-left: 1px solid var(--border);
+          }
+          .ew-preview iframe {
+            width: 100%;
+            height: 100%;
+            border: none;
+            display: block;
+          }
         }
       `}</style>
       <nav
@@ -63,9 +82,18 @@ export default async function AdminLayout({ children }: { children: React.ReactN
           <LogoutButton />
         </div>
       </nav>
-      <main className="ew-main" style={{ maxWidth: "800px", margin: "0 auto", padding: "2rem 1.5rem" }}>
-        {children}
-      </main>
+      <div className="ew-body">
+        <div className="ew-content">
+          <main className="ew-main" style={{ maxWidth: "800px", margin: "0 auto", padding: "2rem 1.5rem" }}>
+            {children}
+          </main>
+        </div>
+        {!isSuperAdmin && (
+          <div className="ew-preview">
+            <iframe src="/" title="Vorschau" />
+          </div>
+        )}
+      </div>
     </div>
   );
 }
