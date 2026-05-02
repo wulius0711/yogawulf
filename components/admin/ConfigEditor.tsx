@@ -326,7 +326,7 @@ export default function ConfigEditor({ initialConfig, slug }: Props) {
               { label: "Schritt 3 – Ausstattung", fields: [
                 ["sonstigesEquipment", "Sonstiges Equipment (Freitextfeld)"],
               ]},
-              { label: "Schritt 4 – Verpflegung", fields: [
+              { label: "Schritt 4 – Unterkunft", fields: [
                 ["verpflegung",  "Verpflegung"],
                 ["zimmerwunsch", "Zimmerwunsch"],
               ]},
@@ -346,7 +346,7 @@ export default function ConfigEditor({ initialConfig, slug }: Props) {
                 <div key={step.label} style={{ marginBottom: "1.25rem" }}>
                   <div style={{ fontSize: "0.78rem", fontWeight: 700, color: "var(--text)", textTransform: "uppercase", letterSpacing: "0.07em", marginBottom: "0.6rem", borderBottom: "1px solid var(--border)", paddingBottom: "0.4rem", display: "flex", alignItems: "baseline", gap: "0.5rem" }}>
                     {step.label}
-                    {isStep3 && <span style={{ fontWeight: 400, fontSize: "0.72rem", textTransform: "none", letterSpacing: 0, color: "var(--muted)" }}>(unten wählbar)</span>}
+                    {isStep3 && <span style={{ fontWeight: 400, fontSize: "0.72rem", textTransform: "none", letterSpacing: 0, color: "var(--muted)" }}>(Optionen unten wählbar)</span>}
                   </div>
                   {extraTags.length > 0 && (
                     <div style={{ display: "flex", flexWrap: "wrap", gap: "0.4rem", marginBottom: step.fields.length > 0 ? "0.75rem" : 0 }}>
