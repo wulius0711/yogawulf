@@ -60,22 +60,30 @@ export default function Step5Abschluss({ config }: Props) {
         </div>
       )}
 
-      {show(config, "budget") && config.budgetOptions?.length > 0 && (
+      {show(config, "budget") && (
         <div>
           <label>Budgetrahmen</label>
           <select value={form.budget} onChange={(e) => setField("budget", e.target.value)}>
             <option value="">Auswählen</option>
-            {config.budgetOptions.map((o) => <option key={o} value={o}>{o}</option>)}
+            <option value="unter 500 €">unter 500 €</option>
+            <option value="500 – 2.000 €">500 – 2.000 €</option>
+            <option value="2.000 – 5.000 €">2.000 – 5.000 €</option>
+            <option value="über 5.000 €">über 5.000 €</option>
           </select>
         </div>
       )}
 
-      {show(config, "quelle") && config.quelleOptions?.length > 0 && (
+      {show(config, "quelle") && (
         <div>
           <label>Wie habt ihr uns gefunden?</label>
           <select value={form.quelle} onChange={(e) => setField("quelle", e.target.value)}>
             <option value="">Auswählen</option>
-            {config.quelleOptions.map((o) => <option key={o} value={o}>{o}</option>)}
+            <option value="Google">Google</option>
+            <option value="Instagram">Instagram</option>
+            <option value="Empfehlung">Empfehlung</option>
+            <option value="Facebook">Facebook</option>
+            <option value="Messe / Veranstaltung">Messe / Veranstaltung</option>
+            <option value="Sonstiges">Sonstiges</option>
           </select>
         </div>
       )}
