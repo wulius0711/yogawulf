@@ -21,7 +21,7 @@ export default function Step5Abschluss({ config }: Props) {
           <textarea rows={4} placeholder="Angebot für Wanderung, Backkurs, Yoga, Meditation, ..." value={form.wuenscheRahmenprogramm} onChange={(e) => setField("wuenscheRahmenprogramm", e.target.value)} style={{ resize: "vertical" }} autoFocus />
         </div>
       )}
-      {ff?.abrechnung !== false && (
+      {ff?.abrechnung !== false && config.abrechnungOptions?.length > 0 && (
         <div>
           <label>Abrechnung</label>
           <select value={form.abrechnung} onChange={(e) => setField("abrechnung", e.target.value)}>
