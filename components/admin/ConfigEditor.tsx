@@ -94,7 +94,7 @@ export default function ConfigEditor({ initialConfig, slug }: Props) {
     setConfig((c) => ({ ...c, company: { ...c.company, [key]: value } }));
   }
 
-  function setListItem(field: "verpflegungOptions" | "zimmerwunschOptions" | "abrechnungOptions", idx: number, value: string) {
+  function setListItem(field: "verpflegungOptions" | "zimmerwunschOptions" | "abrechnungOptions" | "ausstattungOptions" | "anreiseOptions" | "zahlungOptions", idx: number, value: string) {
     setConfig((c) => {
       const arr = [...c[field]];
       arr[idx] = value;
@@ -102,11 +102,11 @@ export default function ConfigEditor({ initialConfig, slug }: Props) {
     });
   }
 
-  function addListItem(field: "verpflegungOptions" | "zimmerwunschOptions" | "abrechnungOptions") {
+  function addListItem(field: "verpflegungOptions" | "zimmerwunschOptions" | "abrechnungOptions" | "ausstattungOptions" | "anreiseOptions" | "zahlungOptions") {
     setConfig((c) => ({ ...c, [field]: [...c[field], ""] }));
   }
 
-  function removeListItem(field: "verpflegungOptions" | "zimmerwunschOptions" | "abrechnungOptions", idx: number) {
+  function removeListItem(field: "verpflegungOptions" | "zimmerwunschOptions" | "abrechnungOptions" | "ausstattungOptions" | "anreiseOptions" | "zahlungOptions", idx: number) {
     setConfig((c) => ({ ...c, [field]: c[field].filter((_, i) => i !== idx) }));
   }
 
@@ -148,7 +148,7 @@ export default function ConfigEditor({ initialConfig, slug }: Props) {
     }
   }
 
-  function OptionsEditor({ field, label }: { field: "verpflegungOptions" | "zimmerwunschOptions" | "abrechnungOptions"; label: string }) {
+  function OptionsEditor({ field, label }: { field: "verpflegungOptions" | "zimmerwunschOptions" | "abrechnungOptions" | "ausstattungOptions" | "anreiseOptions" | "zahlungOptions"; label: string }) {
     return (
       <div>
         <div style={{ fontSize: "0.82rem", fontWeight: 700, color: "var(--text)", textTransform: "uppercase", letterSpacing: "0.07em", marginBottom: "0.6rem", borderBottom: "1px solid var(--border)", paddingBottom: "0.4rem" }}>{label}</div>
@@ -338,6 +338,7 @@ export default function ConfigEditor({ initialConfig, slug }: Props) {
               { label: "Schritt 5 – Abschluss", fields: [
                 ["wuenscheRahmenprogramm", "Wünsche Rahmenprogramm"],
                 ["abrechnung",            "Abrechnung"],
+                ["zahlung",               "Zahlung"],
                 ["anreise",               "Anreise"],
                 ["barrierefreiheit",      "Besondere Bedürfnisse"],
                 ["budget",                "Budgetrahmen"],
@@ -363,6 +364,9 @@ export default function ConfigEditor({ initialConfig, slug }: Props) {
               <OptionsEditor field="verpflegungOptions" label="Verpflegung-Optionen" />
               <OptionsEditor field="zimmerwunschOptions" label="Zimmerwunsch-Optionen" />
               <OptionsEditor field="abrechnungOptions" label="Abrechnungs-Optionen" />
+              <OptionsEditor field="ausstattungOptions" label="Ausstattungs-Optionen" />
+              <OptionsEditor field="zahlungOptions" label="Zahlungs-Optionen" />
+              <OptionsEditor field="anreiseOptions" label="Anreise-Optionen" />
             </div>
           </Section>
         </>

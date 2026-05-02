@@ -4,11 +4,20 @@ import type { EventConfig } from "@/lib/types";
 
 const CLIENTS_DIR = path.join(process.cwd(), "config", "clients");
 
+const ARRAY_DEFAULTS: Partial<EventConfig> = {
+  ausstattungOptions: [],
+  anreiseOptions: [],
+  zahlungOptions: [],
+};
+
 export async function loadConfigFromDB(slug: string): Promise<EventConfig> {
   try {
     const { prisma } = await import("@/lib/db");
     const client = await prisma.client.findUnique({ where: { slug } });
-    if (client) return JSON.parse(client.config) as EventConfig;
+    if (client) {
+      const cfg = JSON.parse(client.config) as EventConfig;
+      return { ...ARRAY_DEFAULTS, ...cfg };
+    }
   } catch {
     // DB not available, fall through to file
   }

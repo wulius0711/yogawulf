@@ -31,15 +31,24 @@ export default function Step5Abschluss({ config }: Props) {
         </div>
       )}
 
+      {ff?.zahlung !== false && config.zahlungOptions?.length > 0 && (
+        <div>
+          <label>Zahlung</label>
+          <select value={form.zahlung} onChange={(e) => setField("zahlung", e.target.value)}>
+            <option value="">Auswählen</option>
+            {config.zahlungOptions.map((o) => <option key={o} value={o}>{o}</option>)}
+          </select>
+        </div>
+      )}
+
       {show(config, "anreise") && (
         <div>
           <label>Anreise</label>
           <select value={form.anreise} onChange={(e) => setField("anreise", e.target.value)}>
             <option value="">Auswählen</option>
-            <option value="PKW">PKW</option>
-            <option value="Bahn / Öffentliche">Bahn / Öffentliche</option>
-            <option value="Bus">Bus (organisiert)</option>
-            <option value="Kombination">Kombination</option>
+            {(config.anreiseOptions?.length > 0 ? config.anreiseOptions : ["PKW", "Bahn / Öffentliche", "Bus (organisiert)", "Kombination"]).map((o) => (
+              <option key={o} value={o}>{o}</option>
+            ))}
           </select>
         </div>
       )}

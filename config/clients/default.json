@@ -32,5 +32,8 @@
     "Teilnehmer zahlen selbst",
     "Teilnehmer zahlen Nächtigung, Veranstalter zahlt Räumlichkeiten"
   ],
+  "ausstattungOptions": [],
+  "anreiseOptions": [],
+  "zahlungOptions": [],
   "notifyEmail": "info@openspace.at"
 }

@@ -19,6 +19,7 @@ export interface FormFields {
   // Step 5
   wuenscheRahmenprogramm?: boolean;
   abrechnung?: boolean;
+  zahlung?: boolean;
   anreise?: boolean;
   barrierefreiheit?: boolean;
   budget?: boolean;
@@ -43,6 +44,9 @@ export interface EventConfig {
   verpflegungOptions: string[];
   zimmerwunschOptions: string[];
   abrechnungOptions: string[];
+  ausstattungOptions: string[];
+  anreiseOptions: string[];
+  zahlungOptions: string[];
   notifyEmail: string;
   formFields?: FormFields;
   showPackages?: boolean;
@@ -118,6 +122,8 @@ export interface InquiryFormData {
   abrechnung: string;
   telefon: string;
   sprache: string;
+  ausstattungExtra: string[];
+  zahlung: string;
   anreise: string;
   barrierefreiheit: string;
   budget: string;
