@@ -183,7 +183,7 @@ export default function Calendar({ slug, selectedStart, selectedEnd, onRangeChan
     <div style={{ border: "1px solid var(--border)", borderRadius: "var(--radius)", background: "var(--surface)", overflow: "hidden", userSelect: "none" }}>
       {/* Header */}
       <div style={{ display: "flex", alignItems: "center", gap: "0.5rem", padding: "0.75rem 1rem", borderBottom: "1px solid var(--border)" }}>
-        <button onClick={() => { setMonth(today.getMonth()); setYear(today.getFullYear()); }}
+        <button onClick={() => { if (today) { setMonth(today.getMonth()); setYear(today.getFullYear()); } }}
           style={{ padding: "0.3rem 0.8rem", border: "1px solid var(--border)", borderRadius: "var(--radius-sm)", background: "var(--surface)", cursor: "pointer", fontSize: "0.82rem", fontWeight: 500 }}>
           Heute
         </button>
