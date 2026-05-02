@@ -1,12 +1,12 @@
 import { getSession } from "@/lib/auth";
 import { prisma } from "@/lib/db";
 import ConfigEditor from "@/components/admin/ConfigEditor";
-import type { YogaConfig } from "@/lib/types";
+import type { EventConfig } from "@/lib/types";
 
 export default async function ConfigPage() {
   const session = await getSession();
   const client = await prisma.client.findUnique({ where: { slug: session!.clientSlug } });
-  const config = JSON.parse(client!.config) as YogaConfig;
+  const config = JSON.parse(client!.config) as EventConfig;
 
   return (
     <div>

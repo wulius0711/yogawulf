@@ -2,7 +2,7 @@ import { NextRequest, NextResponse } from "next/server";
 import { getSession } from "@/lib/auth";
 import { prisma } from "@/lib/db";
 
-function serialize(b: { id: string; startDate: Date; endDate: Date; label: string; type: string; color: string; [key: string]: unknown }) {
+function serialize(b: { id: string; startDate: Date; endDate: Date; label: string; type: string; color: string; maxCapacity: number | null; bookedCount: number }) {
   return {
     id: b.id,
     startDate: b.startDate.toISOString(),
@@ -10,6 +10,8 @@ function serialize(b: { id: string; startDate: Date; endDate: Date; label: strin
     label: b.label,
     type: b.type,
     color: b.color,
+    maxCapacity: b.maxCapacity,
+    bookedCount: b.bookedCount,
   };
 }
 
@@ -40,7 +42,7 @@ export async function POST(req: NextRequest) {
   const clientId = await getClientId(session.clientSlug);
   if (!clientId) return NextResponse.json({ error: "Client nicht gefunden" }, { status: 404 });
 
-  const { startDate, endDate, label, type, color } = await req.json();
+  const { startDate, endDate, label, type, color, maxCapacity } = await req.json();
   const entry = await prisma.blockedDate.create({
     data: {
       clientId,
@@ -49,6 +51,7 @@ export async function POST(req: NextRequest) {
       label: label ?? (type === "event" ? "Event" : "nicht verfügbar"),
       type: type ?? "blocked",
       color: color ?? "",
+      maxCapacity: maxCapacity ? Number(maxCapacity) : null,
     },
   });
 
@@ -62,7 +65,7 @@ export async function PATCH(req: NextRequest) {
   const clientId = await getClientId(session.clientSlug);
   if (!clientId) return NextResponse.json({ error: "Client nicht gefunden" }, { status: 404 });
 
-  const { id, startDate, endDate, label, type, color } = await req.json();
+  const { id, startDate, endDate, label, type, color, maxCapacity } = await req.json();
   const entry = await prisma.blockedDate.findFirst({ where: { id, clientId } });
   if (!entry) return NextResponse.json({ error: "Nicht gefunden" }, { status: 404 });
 
@@ -74,6 +77,7 @@ export async function PATCH(req: NextRequest) {
       label: label ?? entry.label,
       type: type ?? entry.type,
       color: color ?? entry.color,
+      maxCapacity: maxCapacity !== undefined ? (maxCapacity ? Number(maxCapacity) : null) : entry.maxCapacity,
     },
   });
 

@@ -25,7 +25,7 @@ export interface FormFields {
   quelle?: boolean;
 }
 
-export interface YogaConfig {
+export interface EventConfig {
   company: {
     name: string;
     tagline: string;
@@ -38,12 +38,38 @@ export interface YogaConfig {
   };
   formTitle: string;
   formTitleFont?: string;
+  formBodyFont?: string;
   formBgColor?: string;
   verpflegungOptions: string[];
   zimmerwunschOptions: string[];
   abrechnungOptions: string[];
   notifyEmail: string;
   formFields?: FormFields;
+  showPackages?: boolean;
+  showCapacity?: boolean;
+  billing?: {
+    taxRate?: number;
+    validityDays?: number;
+  };
+}
+
+export interface InvoiceLineItem {
+  description: string;
+  quantity: number;
+  unitPrice: number;
+}
+
+export interface InvoiceEntry {
+  id: string;
+  inquiryId: string;
+  number: string;
+  status: string;
+  lineItems: InvoiceLineItem[];
+  taxRate: number;
+  validUntil: string | null;
+  notes: string;
+  sentAt: string | null;
+  issuedAt: string;
 }
 
 export interface BlockedDateEntry {
@@ -53,9 +79,24 @@ export interface BlockedDateEntry {
   label: string;
   type: "blocked" | "event";
   color: string;
+  maxCapacity?: number | null;
+  bookedCount?: number;
+}
+
+export interface PackageEntry {
+  id: string;
+  name: string;
+  description: string;
+  pricePerPerson: number;
+  minParticipants: number;
+  maxParticipants: number;
+  durationDays: number;
+  isActive: boolean;
+  sortOrder: number;
 }
 
 export interface InquiryFormData {
+  packageId?: string;
   artTitel: string;
   nameGruppenleitung: string;
   datumVon: string;

@@ -1,13 +1,13 @@
 "use client";
-import { useState } from "react";
-import type { YogaConfig } from "@/lib/types";
+import { useState, useEffect } from "react";
+import type { EventConfig } from "@/lib/types";
 
 interface Props {
-  initialConfig: YogaConfig;
+  initialConfig: EventConfig;
   slug: string;
 }
 
-type Tab = "firma" | "formular" | "passwort" | "einbetten";
+type Tab = "firma" | "formular" | "abrechnung" | "passwort" | "einbetten";
 
 function Section({ title, children }: { title: string; children: React.ReactNode }) {
   return (
@@ -20,14 +20,15 @@ function Section({ title, children }: { title: string; children: React.ReactNode
         marginBottom: "1.25rem",
       }}
     >
-      <h2 style={{ fontSize: "0.95rem", fontWeight: 600, marginBottom: "1.25rem" }}>{title}</h2>
+      <h2 style={{ fontSize: "0.95rem", fontWeight: 600, marginBottom: "1.25rem", color: "var(--text)" }}>{title}</h2>
       {children}
     </div>
   );
 }
 
 function EmbedTab({ slug }: { slug: string }) {
-  const origin = typeof window !== "undefined" ? window.location.origin : "https://deine-domain.com";
+  const [origin, setOrigin] = useState("");
+  useEffect(() => { setOrigin(window.location.origin); }, []);
   const src = `${origin}/?kunde=${slug}`;
 
   const snippet = `<iframe id="eventwulf-widget" src="${src}" width="100%" frameborder="0" style="border:none;display:block" scrolling="no"></iframe>
@@ -66,7 +67,7 @@ function Field({ label, children }: { label: string; children: React.ReactNode }
 }
 
 export default function ConfigEditor({ initialConfig, slug }: Props) {
-  const [config, setConfig] = useState<YogaConfig>(initialConfig);
+  const [config, setConfig] = useState<EventConfig>(initialConfig);
   const [tab, setTab] = useState<Tab>("firma");
   const [saving, setSaving] = useState(false);
   const [saved, setSaved] = useState(false);
@@ -77,19 +78,19 @@ export default function ConfigEditor({ initialConfig, slug }: Props) {
   const [newPw, setNewPw] = useState("");
   const [pwMsg, setPwMsg] = useState("");
 
-  function set<K extends keyof YogaConfig>(key: K, value: YogaConfig[K]) {
+  function set<K extends keyof EventConfig>(key: K, value: EventConfig[K]) {
     setConfig((c) => ({ ...c, [key]: value }));
   }
 
-  function setFormField(field: keyof NonNullable<YogaConfig["formFields"]>, value: boolean) {
+  function setFormField(field: keyof NonNullable<EventConfig["formFields"]>, value: boolean) {
     setConfig((c) => ({ ...c, formFields: { ...c.formFields, [field]: value } }));
   }
 
-  function fieldEnabled(field: keyof NonNullable<YogaConfig["formFields"]>) {
+  function fieldEnabled(field: keyof NonNullable<EventConfig["formFields"]>) {
     return config.formFields?.[field] !== false;
   }
 
-  function setCompany(key: keyof YogaConfig["company"], value: string) {
+  function setCompany(key: keyof EventConfig["company"], value: string) {
     setConfig((c) => ({ ...c, company: { ...c.company, [key]: value } }));
   }
 
@@ -149,8 +150,8 @@ export default function ConfigEditor({ initialConfig, slug }: Props) {
 
   function OptionsEditor({ field, label }: { field: "verpflegungOptions" | "zimmerwunschOptions" | "abrechnungOptions"; label: string }) {
     return (
-      <div style={{ marginBottom: "1.25rem" }}>
-        <div style={{ fontSize: "0.85rem", color: "var(--muted)", marginBottom: "0.5rem" }}>{label}</div>
+      <div>
+        <div style={{ fontSize: "0.82rem", fontWeight: 700, color: "var(--text)", textTransform: "uppercase", letterSpacing: "0.07em", marginBottom: "0.6rem", borderBottom: "1px solid var(--border)", paddingBottom: "0.4rem" }}>{label}</div>
         {config[field].map((item, i) => (
           <div key={i} style={{ display: "flex", gap: "0.5rem", marginBottom: "0.4rem" }}>
             <input
@@ -199,9 +200,9 @@ export default function ConfigEditor({ initialConfig, slug }: Props) {
   const tabStyle = (t: Tab) => ({
     padding: "0.5rem 1rem",
     border: "none",
-    borderBottom: `2px solid ${tab === t ? "var(--primary)" : "transparent"}`,
+    borderBottom: `2px solid ${tab === t ? "#818cf8" : "transparent"}`,
     background: "none",
-    color: tab === t ? "var(--primary)" : "var(--muted)",
+    color: tab === t ? "#818cf8" : "#ffffff",
     cursor: "pointer",
     fontWeight: tab === t ? 600 : 400,
     fontSize: "0.88rem",
@@ -221,6 +222,7 @@ export default function ConfigEditor({ initialConfig, slug }: Props) {
       >
         <button style={tabStyle("firma")} onClick={() => setTab("firma")}>Firma</button>
         <button style={tabStyle("formular")} onClick={() => setTab("formular")}>Formular</button>
+        <button style={tabStyle("abrechnung")} onClick={() => setTab("abrechnung")}>Abrechnung</button>
         <button style={tabStyle("einbetten")} onClick={() => setTab("einbetten")}>Einbetten</button>
         <button style={tabStyle("passwort")} onClick={() => setTab("passwort")}>Passwort</button>
       </div>
@@ -266,64 +268,115 @@ export default function ConfigEditor({ initialConfig, slug }: Props) {
                 )}
               </div>
             </Field>
-            <Field label="Schriftart Titel">
+            <Field label="Schriftart Überschrift">
               <select value={config.formTitleFont ?? "Cormorant Garamond"} onChange={(e) => set("formTitleFont", e.target.value)}>
                 <option value="Cormorant Garamond">Cormorant Garamond – elegant, dünn</option>
                 <option value="Playfair Display">Playfair Display – klassisch, serif</option>
                 <option value="Lora">Lora – warm, lesbar</option>
                 <option value="DM Serif Display">DM Serif Display – modern, markant</option>
                 <option value="EB Garamond">EB Garamond – zeitlos, fein</option>
-                <option value="Georgia, serif">Georgia – systemfont, schlicht</option>
+                <option value="Georgia">Georgia – systemfont, schlicht</option>
+              </select>
+            </Field>
+            <Field label="Schriftart Fließtext">
+              <select value={config.formBodyFont ?? ""} onChange={(e) => set("formBodyFont", e.target.value)}>
+                <option value="">System UI – Standard (sans-serif)</option>
+                <option value="Inter">Inter – modern, neutral</option>
+                <option value="Lato">Lato – freundlich, rund</option>
+                <option value="Source Sans 3">Source Sans 3 – klar, lesbar</option>
+                <option value="Nunito">Nunito – weich, warm</option>
+                <option value="Lora">Lora – klassisch, serif</option>
               </select>
             </Field>
           </Section>
 
-          <Section title="Felder">
-            <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fill, minmax(190px, 1fr))", gap: "0.15rem 1.5rem" }}>
-              {([
-                [null,               "Schritt 1 – Veranstaltung"],
-                ["uhrzeiten",        "Uhrzeiten (Beginn / Ende)"],
-                [null,               "Schritt 2 – Gruppe"],
-                ["personenAnzahl",   "Anzahl Teilnehmer:innen"],
-                ["leiterinnen",      "Leiter:innen"],
-                ["telefon",          "Telefon"],
-                ["sprache",          "Sprache der Gruppe"],
-                [null,               "Schritt 3 – Ausstattung"],
-                ["bestuhlung",       "Bestuhlung"],
-                ["tische",           "Tische"],
-                ["beamer",           "Beamer / Projektor"],
-                ["soundanlage",      "Soundanlage / Mikrofon"],
-                ["aussenbereich",    "Außenbereich"],
-                ["sonstigesEquipment","Sonstiges Equipment"],
-                [null,               "Schritt 4 – Verpflegung"],
-                ["verpflegung",      "Verpflegung"],
-                ["zimmerwunsch",     "Zimmerwunsch"],
-                [null,               "Schritt 5 – Abschluss"],
-                ["wuenscheRahmenprogramm", "Wünsche Rahmenprogramm"],
-                ["abrechnung",       "Abrechnung"],
-                ["anreise",          "Anreise"],
-                ["barrierefreiheit", "Besondere Bedürfnisse"],
-                ["budget",           "Budgetrahmen"],
-                ["quelle",           "Wie habt ihr uns gefunden?"],
-              ] as [keyof NonNullable<YogaConfig["formFields"]> | null, string][]).map(([field, label], i) =>
-                field === null ? (
-                  <div key={i} style={{ gridColumn: "1 / -1", fontSize: "0.72rem", fontWeight: 600, color: "var(--muted)", marginTop: i === 0 ? 0 : "0.75rem", marginBottom: "0.2rem", textTransform: "uppercase", letterSpacing: "0.05em" }}>{label}</div>
-                ) : (
-                  <label key={field} style={{ display: "flex", alignItems: "center", gap: "0.5rem", padding: "0.3rem 0", cursor: "pointer", fontSize: "0.88rem", color: "var(--text)", fontWeight: 400 }}>
-                    <input type="checkbox" checked={fieldEnabled(field)} onChange={(e) => setFormField(field, e.target.checked)} style={{ width: "auto", cursor: "pointer", flexShrink: 0 }} />
-                    {label}
-                  </label>
-                )
-              )}
+          <Section title="Widget-Features">
+            <p style={{ margin: "0 0 1rem", fontSize: "0.82rem", color: "var(--muted)" }}>
+              Diese Features sind standardmäßig ausgeblendet und müssen explizit aktiviert werden.
+            </p>
+            <div style={{ display: "flex", flexDirection: "column", gap: "0.6rem" }}>
+              <label style={{ display: "flex", alignItems: "flex-start", gap: "0.6rem", cursor: "pointer", fontSize: "0.88rem" }}>
+                <input type="checkbox" checked={config.showPackages === true} onChange={(e) => set("showPackages", e.target.checked)} style={{ width: "auto", cursor: "pointer", marginTop: "0.1rem", flexShrink: 0 }} />
+                <span>
+                  <strong>Seminarpakete anzeigen</strong>
+                  <span style={{ display: "block", fontSize: "0.78rem", color: "var(--muted)" }}>Zeigt eine Paketauswahl in Schritt 1 des Buchungsformulars</span>
+                </span>
+              </label>
+              <label style={{ display: "flex", alignItems: "flex-start", gap: "0.6rem", cursor: "pointer", fontSize: "0.88rem" }}>
+                <input type="checkbox" checked={config.showCapacity === true} onChange={(e) => set("showCapacity", e.target.checked)} style={{ width: "auto", cursor: "pointer", marginTop: "0.1rem", flexShrink: 0 }} />
+                <span>
+                  <strong>Verfügbare Plätze anzeigen</strong>
+                  <span style={{ display: "block", fontSize: "0.78rem", color: "var(--muted)" }}>Zeigt verbleibende Kapazität im Kalender (erfordert konfigurierte Kapazitäten)</span>
+                </span>
+              </label>
             </div>
+          </Section>
 
-            <div style={{ borderTop: "1px solid var(--border)", marginTop: "1.25rem", paddingTop: "1.25rem" }}>
+          <Section title="Felder">
+            {([
+              { label: "Schritt 1 – Veranstaltung", fields: [
+                ["uhrzeiten", "Uhrzeiten (Beginn / Ende)"],
+              ]},
+              { label: "Schritt 2 – Gruppe", fields: [
+                ["personenAnzahl", "Anzahl Teilnehmer:innen"],
+                ["leiterinnen",    "Leiter:innen"],
+                ["telefon",        "Telefon"],
+                ["sprache",        "Sprache der Gruppe"],
+              ]},
+              { label: "Schritt 3 – Ausstattung", fields: [
+                ["bestuhlung",        "Bestuhlung"],
+                ["tische",            "Tische"],
+                ["beamer",            "Beamer / Projektor"],
+                ["soundanlage",       "Soundanlage / Mikrofon"],
+                ["aussenbereich",     "Außenbereich"],
+                ["sonstigesEquipment","Sonstiges Equipment"],
+              ]},
+              { label: "Schritt 4 – Verpflegung", fields: [
+                ["verpflegung",  "Verpflegung"],
+                ["zimmerwunsch", "Zimmerwunsch"],
+              ]},
+              { label: "Schritt 5 – Abschluss", fields: [
+                ["wuenscheRahmenprogramm", "Wünsche Rahmenprogramm"],
+                ["abrechnung",            "Abrechnung"],
+                ["anreise",               "Anreise"],
+                ["barrierefreiheit",      "Besondere Bedürfnisse"],
+                ["budget",                "Budgetrahmen"],
+                ["quelle",                "Wie habt ihr uns gefunden?"],
+              ]},
+            ] as { label: string; fields: [keyof NonNullable<EventConfig["formFields"]>, string][] }[]).map((step) => (
+              <div key={step.label} style={{ marginBottom: "1.25rem" }}>
+                <div style={{ fontSize: "0.78rem", fontWeight: 700, color: "var(--text)", textTransform: "uppercase", letterSpacing: "0.07em", marginBottom: "0.6rem", borderBottom: "1px solid var(--border)", paddingBottom: "0.4rem" }}>
+                  {step.label}
+                </div>
+                <div style={{ display: "grid", gridTemplateColumns: "repeat(3, 1fr)", gap: "0.1rem 0" }}>
+                  {step.fields.map(([field, label]) => (
+                    <label key={field} style={{ display: "flex", alignItems: "center", gap: "0.5rem", padding: "0.3rem 0", cursor: "pointer", fontSize: "0.875rem", color: "var(--text)", fontWeight: 400 }}>
+                      <input type="checkbox" checked={fieldEnabled(field)} onChange={(e) => setFormField(field, e.target.checked)} style={{ width: "auto", cursor: "pointer", flexShrink: 0 }} />
+                      {label}
+                    </label>
+                  ))}
+                </div>
+              </div>
+            ))}
+
+            <div style={{ borderTop: "1px solid var(--border)", marginTop: "1.25rem", paddingTop: "1.25rem", display: "grid", gridTemplateColumns: "1fr 1fr", gap: "1.25rem 2rem" }}>
               <OptionsEditor field="verpflegungOptions" label="Verpflegung-Optionen" />
               <OptionsEditor field="zimmerwunschOptions" label="Zimmerwunsch-Optionen" />
               <OptionsEditor field="abrechnungOptions" label="Abrechnungs-Optionen" />
             </div>
           </Section>
         </>
+      )}
+
+      {tab === "abrechnung" && (
+        <Section title="Angebotseinstellungen">
+          <Field label="Steuersatz (%)">
+            <input type="number" min="0" max="100" step="1" value={Math.round((config.billing?.taxRate ?? 0.20) * 100)} onChange={(e) => set("billing", { ...config.billing, taxRate: (parseInt(e.target.value) || 20) / 100 })} style={{ maxWidth: "120px" }} />
+          </Field>
+          <Field label="Angebot gültig für (Tage)">
+            <input type="number" min="1" max="365" value={config.billing?.validityDays ?? 30} onChange={(e) => set("billing", { ...config.billing, validityDays: parseInt(e.target.value) || 30 })} style={{ maxWidth: "120px" }} />
+          </Field>
+        </Section>
       )}
 
       {tab === "einbetten" && (
@@ -350,6 +403,8 @@ export default function ConfigEditor({ initialConfig, slug }: Props) {
       {/* Save bar (only for firma/formular tabs) */}
       {tab !== "passwort" && (
         <div style={{ display: "flex", alignItems: "center", justifyContent: "flex-end", gap: "1rem", marginTop: "1rem" }}>
+          {saved && <span style={{ color: "#16a34a", fontSize: "0.85rem" }}>Gespeichert ✓</span>}
+          {saveError && <span style={{ color: "#dc2626", fontSize: "0.85rem" }}>{saveError}</span>}
           <button
             onClick={handleSave}
             disabled={saving}
@@ -366,8 +421,6 @@ export default function ConfigEditor({ initialConfig, slug }: Props) {
           >
             {saving ? "Speichern…" : "Änderungen speichern"}
           </button>
-          {saved && <span style={{ color: "#16a34a", fontSize: "0.85rem" }}>Gespeichert ✓</span>}
-          {saveError && <span style={{ color: "#dc2626", fontSize: "0.85rem" }}>{saveError}</span>}
         </div>
       )}
     </div>

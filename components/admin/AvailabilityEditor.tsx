@@ -27,12 +27,13 @@ export default function AvailabilityEditor() {
   const [tab, setTab]             = useState<EntryType>("blocked");
   const [editingId, setEditingId] = useState<string | null>(null);
 
-  const [startDate, setStartDate] = useState("");
-  const [endDate, setEndDate]     = useState("");
-  const [label, setLabel]         = useState("");
-  const [color, setColor]         = useState(EVENT_COLORS[0].value);
-  const [loading, setLoading]     = useState(false);
-  const [error, setError]         = useState("");
+  const [startDate, setStartDate]   = useState("");
+  const [endDate, setEndDate]       = useState("");
+  const [label, setLabel]           = useState("");
+  const [color, setColor]           = useState(EVENT_COLORS[0].value);
+  const [maxCapacity, setMaxCapacity] = useState("");
+  const [loading, setLoading]       = useState(false);
+  const [error, setError]           = useState("");
 
   useEffect(() => {
     fetch("/api/admin/availability")
@@ -48,6 +49,7 @@ export default function AvailabilityEditor() {
     setEndDate(isoDate(entry.endDate));
     setLabel(entry.label);
     setColor(entry.color || EVENT_COLORS[0].value);
+    setMaxCapacity(entry.maxCapacity != null ? String(entry.maxCapacity) : "");
     setError("");
     window.scrollTo({ top: 0, behavior: "smooth" });
   }
@@ -56,6 +58,7 @@ export default function AvailabilityEditor() {
     setEditingId(null);
     setStartDate(""); setEndDate(""); setLabel("");
     setColor(EVENT_COLORS[0].value);
+    setMaxCapacity("");
     setError("");
   }
 
@@ -75,6 +78,7 @@ export default function AvailabilityEditor() {
       type: tab,
       label: label || (tab === "blocked" ? "nicht verfügbar" : ""),
       color: tab === "event" ? color : "",
+      maxCapacity: tab === "event" && maxCapacity ? Number(maxCapacity) : null,
       ...(editingId ? { id: editingId } : {}),
     };
 
@@ -162,23 +166,30 @@ export default function AvailabilityEditor() {
             <input type="text" value={label} onChange={(e) => setLabel(e.target.value)} placeholder="nicht verfügbar" />
           </div>
         ) : (
-          <div style={{ display: "grid", gridTemplateColumns: "1fr auto", gap: "1rem", alignItems: "end" }}>
-            <div>
-              <label>Event-Name *</label>
-              <input type="text" value={label} onChange={(e) => setLabel(e.target.value)} placeholder="z.B. Yoga-Retreat Gruppe Müller" required />
-            </div>
-            <div>
-              <label>Farbe</label>
-              <div style={{ display: "flex", gap: "0.4rem" }}>
-                {EVENT_COLORS.map((c) => (
-                  <button key={c.value} type="button" onClick={() => setColor(c.value)} title={c.label} style={{
-                    width: "1.6rem", height: "1.6rem", borderRadius: "50%", background: c.value, flexShrink: 0,
-                    border: color === c.value ? "3px solid var(--text)" : "2px solid transparent", cursor: "pointer",
-                  }} />
-                ))}
+          <>
+            <div style={{ display: "grid", gridTemplateColumns: "1fr auto", gap: "1rem", alignItems: "end" }}>
+              <div>
+                <label>Event-Name *</label>
+                <input type="text" value={label} onChange={(e) => setLabel(e.target.value)} placeholder="z.B. Seminarwoche Gruppe Müller" required />
+              </div>
+              <div>
+                <label>Farbe</label>
+                <div style={{ display: "flex", gap: "0.4rem" }}>
+                  {EVENT_COLORS.map((c) => (
+                    <button key={c.value} type="button" onClick={() => setColor(c.value)} title={c.label} style={{
+                      width: "1.6rem", height: "1.6rem", borderRadius: "50%", background: c.value, flexShrink: 0,
+                      border: color === c.value ? "3px solid var(--text)" : "2px solid transparent", cursor: "pointer",
+                    }} />
+                  ))}
+                </div>
               </div>
             </div>
-          </div>
+            <div>
+              <label>Max. Kapazität (Teilnehmer, optional)</label>
+              <input type="number" min="1" value={maxCapacity} onChange={(e) => setMaxCapacity(e.target.value)}
+                placeholder="z.B. 30 – leer lassen für unbegrenzt" style={{ maxWidth: "280px" }} />
+            </div>
+          </>
         )}
 
         {error && <p style={{ color: "#dc2626", fontSize: "0.85rem", margin: 0 }}>{error}</p>}
@@ -231,7 +242,17 @@ export default function AvailabilityEditor() {
               }}>
                 {fmt(entry.startDate)} – {fmt(entry.endDate)}
               </span>
-              <span style={{ fontSize: "0.85rem", color: "var(--muted)", flex: 1 }}>{entry.label}</span>
+              <span style={{ fontSize: "0.85rem", color: "var(--muted)", flex: 1 }}>
+                {entry.label}
+                {entry.type === "event" && entry.maxCapacity != null && (
+                  <span style={{
+                    marginLeft: "0.6rem", fontSize: "0.75rem", fontWeight: 500,
+                    color: entry.bookedCount! >= entry.maxCapacity ? "#dc2626" : "#16a34a",
+                  }}>
+                    {entry.bookedCount}/{entry.maxCapacity} Plätze belegt
+                  </span>
+                )}
+              </span>
               <div className="ew-entry-actions" style={{ display: "flex", gap: "0.5rem", flexShrink: 0 }}>
                 <button onClick={() => startEdit(entry)} style={{
                   padding: "0.28rem 0.65rem", border: "1px solid var(--border)",

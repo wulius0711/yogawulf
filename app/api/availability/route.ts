@@ -1,6 +1,10 @@
 import { NextRequest, NextResponse } from "next/server";
+import { rateLimit, getIp } from "@/lib/ratelimit";
 
 export async function GET(req: NextRequest) {
+  if (!rateLimit(`availability:${getIp(req)}`, 30, 60 * 1000)) {
+    return NextResponse.json([], { status: 429 });
+  }
   const slug = req.nextUrl.searchParams.get("slug") ?? "default";
 
   try {
@@ -21,6 +25,8 @@ export async function GET(req: NextRequest) {
         label: b.label,
         type: b.type,
         color: b.color,
+        maxCapacity: b.maxCapacity ?? null,
+        bookedCount: b.bookedCount,
       }))
     );
   } catch {

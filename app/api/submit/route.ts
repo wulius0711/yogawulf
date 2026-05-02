@@ -3,6 +3,12 @@ import { Resend } from "resend";
 import { loadConfigFromDB } from "@/lib/loadConfig";
 import { prisma } from "@/lib/db";
 import type { InquiryFormData } from "@/lib/types";
+import { rateLimit, getIp } from "@/lib/ratelimit";
+import { validateSubmit } from "@/lib/validate";
+
+function sanitize(val: unknown): string {
+  return String(val ?? "").replace(/[\r\n\t]/g, " ").trim();
+}
 
 function yesNo(val: boolean | null) {
   if (val === true) return "Ja";
@@ -22,9 +28,27 @@ function fmt(iso: string) {
 }
 
 export async function POST(req: NextRequest) {
-  const body = await req.json() as InquiryFormData & { slug?: string };
+  if (!rateLimit(`submit:${getIp(req)}`, 5, 10 * 60 * 1000)) {
+    return NextResponse.json({ error: "Zu viele Anfragen. Bitte warte 10 Minuten." }, { status: 429 });
+  }
+
+  const raw = await req.json();
+  const validationError = validateSubmit(raw);
+  if (validationError) {
+    return NextResponse.json({ error: validationError }, { status: 400 });
+  }
+  const body = raw as InquiryFormData & { slug?: string };
   const slug = body.slug ?? "default";
   const config = await loadConfigFromDB(slug);
+
+  // Resolve package name for email if provided
+  let packageName = "";
+  if (body.packageId) {
+    try {
+      const pkg = await prisma.package.findUnique({ where: { id: body.packageId }, select: { name: true } });
+      packageName = pkg?.name ?? "";
+    } catch { /* ignore */ }
+  }
   const notifyEmail = config.notifyEmail ?? process.env.NOTIFY_EMAIL ?? "";
 
   if (!notifyEmail) {
@@ -32,6 +56,7 @@ export async function POST(req: NextRequest) {
   }
 
   const rows = [
+    row("Seminarpaket", packageName),
     row("Art / Titel", body.artTitel),
     row("Gruppenleitung", body.nameGruppenleitung),
     row("E-Mail", body.email),
@@ -93,15 +118,15 @@ export async function POST(req: NextRequest) {
     resend.emails.send({
       from: `${config.company.name} <noreply@resend.dev>`,
       to: notifyEmail,
-      replyTo: body.email || undefined,
-      subject: `Neue Anfrage: ${body.artTitel || "Retreat"} – ${body.nameGruppenleitung}`,
+      replyTo: body.email ? sanitize(body.email) : undefined,
+      subject: `Neue Anfrage: ${sanitize(body.artTitel) || "Retreat"} – ${sanitize(body.nameGruppenleitung)}`,
       html: operatorHtml,
     }),
     body.email
       ? resend.emails.send({
           from: `${config.company.name} <noreply@resend.dev>`,
           to: body.email,
-          subject: `Anfrage bestätigt – ${body.artTitel || "Retreat"}`,
+          subject: `Anfrage bestätigt – ${sanitize(body.artTitel) || "Retreat"}`,
           html: confirmationHtml,
         })
       : Promise.resolve({ error: null }),
@@ -119,11 +144,14 @@ export async function POST(req: NextRequest) {
   try {
     const client = await prisma.client.findUnique({ where: { slug } });
     if (client) {
+      const participantCount = parseInt(body.personenAnzahl ?? "0") || 0;
       await prisma.inquiry.create({
         data: {
           clientId: client.id,
           data: JSON.stringify(body),
           status: "neu",
+          participantCount,
+          ...(body.packageId ? { packageId: body.packageId } : {}),
         },
       });
     }

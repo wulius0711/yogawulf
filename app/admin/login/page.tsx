@@ -31,6 +31,7 @@ export default function LoginPage() {
 
   return (
     <div
+      className="admin-shell"
       style={{
         minHeight: "100vh",
         display: "flex",

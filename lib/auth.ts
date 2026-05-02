@@ -1,8 +1,9 @@
 import { SignJWT, jwtVerify } from "jose";
 import { cookies } from "next/headers";
 
-const SECRET = new TextEncoder().encode(process.env.JWT_SECRET ?? "fallback-secret");
-const COOKIE = "yoga_admin_token";
+if (!process.env.JWT_SECRET) throw new Error("JWT_SECRET environment variable is required");
+const SECRET = new TextEncoder().encode(process.env.JWT_SECRET);
+const COOKIE = "event_admin_token";
 
 export interface AdminSession {
   userId: string;
@@ -36,4 +37,14 @@ export async function getSession(): Promise<AdminSession | null> {
 
 export function cookieName() {
   return COOKIE;
+}
+
+export function cookieOptions(maxAge = 60 * 60 * 24 * 7) {
+  return {
+    httpOnly: true,
+    secure: process.env.NODE_ENV !== "development",
+    sameSite: "lax" as const,
+    maxAge,
+    path: "/",
+  };
 }

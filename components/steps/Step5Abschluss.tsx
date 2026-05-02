@@ -1,10 +1,10 @@
 "use client";
 import { useFormStore } from "@/store/form";
-import type { YogaConfig } from "@/lib/types";
+import type { EventConfig } from "@/lib/types";
 
-interface Props { config: YogaConfig }
+interface Props { config: EventConfig }
 
-function show(config: YogaConfig, field: keyof NonNullable<YogaConfig["formFields"]>) {
+function show(config: EventConfig, field: keyof NonNullable<EventConfig["formFields"]>) {
   return config.formFields?.[field] !== false;
 }
 

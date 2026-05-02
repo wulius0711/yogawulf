@@ -20,11 +20,13 @@ model Organization {
 model Client {
   id             String        @id @default(cuid())
   slug           String        @unique
-  config         String        // JSON string (YogaConfig)
+  config         String        // JSON string (EventConfig)
   organizationId String?
   organization   Organization? @relation(fields: [organizationId], references: [id])
   blockedDates   BlockedDate[]
   inquiries      Inquiry[]
+  packages       Package[]
+  invoices       Invoice[]
   createdAt      DateTime      @default(now())
   updatedAt      DateTime      @updatedAt
 }
@@ -39,22 +41,69 @@ model User {
 }
 
 model BlockedDate {
-  id        String   @id @default(cuid())
-  clientId  String
-  client    Client   @relation(fields: [clientId], references: [id])
-  startDate DateTime
-  endDate   DateTime
-  label     String   @default("nicht verfügbar")
-  type      String   @default("blocked") // "blocked" | "event"
-  color     String   @default("")
-  createdAt DateTime @default(now())
+  id           String   @id @default(cuid())
+  clientId     String
+  client       Client   @relation(fields: [clientId], references: [id])
+  startDate    DateTime
+  endDate      DateTime
+  label        String   @default("nicht verfügbar")
+  type         String   @default("blocked") // "blocked" | "event"
+  color        String   @default("")
+  maxCapacity  Int?
+  bookedCount  Int      @default(0)
+  createdAt    DateTime @default(now())
 }
 
 model Inquiry {
-  id        String   @id @default(cuid())
-  clientId  String
-  client    Client   @relation(fields: [clientId], references: [id])
-  data      String   // JSON string of InquiryFormData
-  status    String   @default("neu")
-  createdAt DateTime @default(now())
+  id               String    @id @default(cuid())
+  clientId         String
+  client           Client    @relation(fields: [clientId], references: [id])
+  data             String    // JSON string of InquiryFormData
+  status           String    @default("neu")
+  packageId        String?
+  package          Package?  @relation(fields: [packageId], references: [id])
+  participantCount Int       @default(0)
+  invoices         Invoice[]
+  createdAt        DateTime  @default(now())
+}
+
+model Invoice {
+  id          String    @id @default(cuid())
+  clientId    String
+  client      Client    @relation(fields: [clientId], references: [id])
+  inquiryId   String
+  inquiry     Inquiry   @relation(fields: [inquiryId], references: [id], onDelete: Cascade)
+  type        String    // "angebot" | "rechnung"
+  number      String    @unique
+  status      String    @default("offen") // "offen" | "bezahlt" | "storniert"
+  lineItems   String    // JSON: [{description, quantity, unitPrice}]
+  taxRate     Float     @default(0.20)
+  validUntil  DateTime?
+  dueDate     DateTime?
+  notes       String    @default("")
+  sentAt      DateTime?
+  issuedAt    DateTime  @default(now())
+  createdAt   DateTime  @default(now())
+}
+
+model InvoiceCounter {
+  id      String @id  // e.g. "angebot-2026"
+  counter Int    @default(0)
+}
+
+model Package {
+  id              String    @id @default(cuid())
+  clientId        String
+  client          Client    @relation(fields: [clientId], references: [id], onDelete: Cascade)
+  name            String
+  description     String    @default("")
+  pricePerPerson  Float     @default(0)
+  minParticipants Int       @default(1)
+  maxParticipants Int       @default(50)
+  durationDays    Int       @default(1)
+  isActive        Boolean   @default(true)
+  sortOrder       Int       @default(0)
+  inquiries       Inquiry[]
+  createdAt       DateTime  @default(now())
+  updatedAt       DateTime  @updatedAt
 }

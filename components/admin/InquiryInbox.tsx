@@ -1,26 +1,31 @@
 "use client";
 import { useState, useEffect } from "react";
 import type { InquiryFormData } from "@/lib/types";
+import InvoicePanel from "@/components/admin/InvoicePanel";
 
 interface Inquiry {
   id: string;
   data: string;
   status: string;
   createdAt: string;
+  participantCount: number;
+  packageId: string | null;
 }
 
 const STATUS_LABELS: Record<string, string> = {
-  neu: "Neu",
-  in_pruefung: "In Prüfung",
-  bestaetigt: "Bestätigt",
-  abgelehnt: "Abgelehnt",
+  neu:               "Neu",
+  in_pruefung:       "In Prüfung",
+  angebot_versendet: "Angebot versendet",
+  bestaetigt:        "Bestätigt",
+  abgelehnt:         "Abgelehnt",
 };
 
 const STATUS_COLORS: Record<string, { bg: string; color: string }> = {
-  neu:          { bg: "#eff6ff", color: "#1d4ed8" },
-  in_pruefung:  { bg: "#fefce8", color: "#a16207" },
-  bestaetigt:   { bg: "#f0fdf4", color: "#15803d" },
-  abgelehnt:    { bg: "#fef2f2", color: "#b91c1c" },
+  neu:               { bg: "#eff6ff", color: "#1d4ed8" },
+  in_pruefung:       { bg: "#fefce8", color: "#a16207" },
+  angebot_versendet: { bg: "#f5f3ff", color: "#6d28d9" },
+  bestaetigt:        { bg: "#f0fdf4", color: "#15803d" },
+  abgelehnt:         { bg: "#fef2f2", color: "#b91c1c" },
 };
 
 function fmt(iso: string) {
@@ -133,6 +138,14 @@ export default function InquiryInbox() {
                   <DetailRow label="Rahmenprogramm" value={d.wuenscheRahmenprogramm} />
                   <DetailRow label="Abrechnung" value={d.abrechnung} />
                 </div>
+
+                <InvoicePanel
+                  inquiryId={inq.id}
+                  participantCount={inq.participantCount}
+                  onStatusChange={(newStatus) =>
+                    setInquiries((prev) => prev.map((i) => i.id === inq.id ? { ...i, status: newStatus } : i))
+                  }
+                />
 
                 {/* Status + delete controls */}
                 <div style={{ display: "flex", alignItems: "center", gap: "0.5rem", flexWrap: "wrap", borderTop: "1px solid var(--border)", paddingTop: "0.9rem" }}>

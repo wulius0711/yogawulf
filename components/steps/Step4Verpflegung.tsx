@@ -1,8 +1,8 @@
 "use client";
 import { useFormStore } from "@/store/form";
-import type { YogaConfig } from "@/lib/types";
+import type { EventConfig } from "@/lib/types";
 
-interface Props { config: YogaConfig }
+interface Props { config: EventConfig }
 
 export default function Step4Verpflegung({ config }: Props) {
   const { form, setField } = useFormStore();

@@ -3,6 +3,7 @@ import { hashSync } from "bcryptjs";
 import { getSession } from "@/lib/auth";
 import { prisma } from "@/lib/db";
 import { loadConfig } from "@/lib/loadConfig";
+import { validatePassword } from "@/lib/validate";
 
 const SUPERADMIN = process.env.SUPERADMIN_SLUG ?? "admin";
 
@@ -30,6 +31,9 @@ export async function POST(req: NextRequest) {
   }
 
   const { slug, email, password } = await req.json();
+
+  const pwError = validatePassword(password);
+  if (pwError) return NextResponse.json({ error: pwError }, { status: 400 });
 
   if (!/^[a-z0-9-]+$/.test(slug)) {
     return NextResponse.json({ error: "Ungültiger Slug (nur a-z, 0-9, -)" }, { status: 400 });

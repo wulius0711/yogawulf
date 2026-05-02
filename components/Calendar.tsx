@@ -13,6 +13,7 @@ interface Props {
   selectedStart?: Date | null;
   selectedEnd?: Date | null;
   onRangeChange?: (start: Date | null, end: Date | null) => void;
+  showCapacity?: boolean;
 }
 
 interface CalendarDay {
@@ -104,14 +105,18 @@ function weekEvents(week: CalendarDay[], entries: BlockedDateEntry[]) {
         end = i;
       }
     }
-    return start === -1 ? [] : [{ start, end, label: ev.label, color: ev.color || "#16a34a", startDate: ev.startDate, endDate: ev.endDate }];
+    return start === -1 ? [] : [{
+      start, end, label: ev.label, color: ev.color || "#16a34a",
+      startDate: ev.startDate, endDate: ev.endDate,
+      maxCapacity: ev.maxCapacity ?? null, bookedCount: ev.bookedCount ?? 0,
+    }];
   });
 }
 
-export default function Calendar({ slug, selectedStart, selectedEnd, onRangeChange }: Props) {
-  const today = toDay(new Date());
-  const [year, setYear] = useState(today.getFullYear());
-  const [month, setMonth] = useState(today.getMonth());
+export default function Calendar({ slug, selectedStart, selectedEnd, onRangeChange, showCapacity }: Props) {
+  const [today, setToday] = useState<Date | null>(null);
+  const [year, setYear] = useState(() => new Date().getFullYear());
+  const [month, setMonth] = useState(() => new Date().getMonth());
   const [blocked, setBlocked] = useState<BlockedDateEntry[]>([]);
   const [hover, setHover] = useState<Date | null>(null);
   // local selection when used standalone (no onRangeChange)
@@ -122,6 +127,8 @@ export default function Calendar({ slug, selectedStart, selectedEnd, onRangeChan
   const selEnd = onRangeChange ? (selectedEnd ?? null) : localEnd;
 
   const [tooltip, setTooltip] = useState<{ label: string; start: string; end: string; x: number; y: number } | null>(null);
+
+  useEffect(() => { setToday(toDay(new Date())); }, []);
 
   useEffect(() => {
     fetch(`/api/availability?slug=${encodeURIComponent(slug)}`)
@@ -206,7 +213,7 @@ export default function Calendar({ slug, selectedStart, selectedEnd, onRangeChan
           <div key={wi} style={{ borderBottom: "1px solid var(--border)" }}>
             <div style={{ display: "grid", gridTemplateColumns: "repeat(7,1fr)" }}>
               {week.map((cell, di) => {
-                const isToday = cell.date.getTime() === today.getTime();
+                const isToday = today !== null && cell.date.getTime() === today.getTime();
                 const blocked_ = isBlocked(cell.date, blocked);
                 const edge = isRangeEdge(cell.date, selStart, selEnd, hover);
                 const between = inRange(cell.date, selStart, selEnd, hover);
@@ -292,8 +299,22 @@ export default function Calendar({ slug, selectedStart, selectedEnd, onRangeChan
                         overflow: "hidden",
                         textOverflow: "ellipsis",
                         cursor: "default",
+                        display: "flex",
+                        alignItems: "center",
+                        gap: "0.3rem",
                       }}>
-                      {ev.label}
+                      <span style={{ overflow: "hidden", textOverflow: "ellipsis" }}>{ev.label}</span>
+                      {showCapacity && ev.maxCapacity != null && (
+                        <span style={{
+                          flexShrink: 0,
+                          background: "rgba(0,0,0,0.25)",
+                          borderRadius: "3px",
+                          padding: "0 0.3rem",
+                          fontSize: "0.62rem",
+                        }}>
+                          {ev.maxCapacity - ev.bookedCount} frei
+                        </span>
+                      )}
                     </div>
                   </div>
                 ))}

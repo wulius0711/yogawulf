@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { getSession } from "@/lib/auth";
 import { prisma } from "@/lib/db";
+import { validateConfig } from "@/lib/validate";
 
 export async function GET() {
   const session = await getSession();
@@ -17,6 +18,10 @@ export async function PUT(req: NextRequest) {
   if (!session) return NextResponse.json({ error: "Nicht eingeloggt" }, { status: 401 });
 
   const body = await req.json();
+  const configError = validateConfig(body);
+  if (configError) {
+    return NextResponse.json({ error: configError }, { status: 400 });
+  }
   await prisma.client.update({
     where: { slug: session.clientSlug },
     data: { config: JSON.stringify(body) },

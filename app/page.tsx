@@ -4,11 +4,15 @@ import Wizard from "@/components/Wizard";
 import IframeResizer from "@/components/IframeResizer";
 
 const GOOGLE_FONTS: Record<string, string> = {
-  "Cormorant Garamond": "Cormorant+Garamond:ital,wght@0,300;0,400;1,300;1,400",
-  "Playfair Display":   "Playfair+Display:ital,wght@0,400;0,600;1,400",
-  "Lora":               "Lora:ital,wght@0,400;0,500;1,400",
-  "DM Serif Display":   "DM+Serif+Display:ital@0;1",
-  "EB Garamond":        "EB+Garamond:ital,wght@0,400;0,500;1,400",
+  "Cormorant Garamond": "Cormorant+Garamond:wght@300;400;500",
+  "Playfair Display":   "Playfair+Display:wght@400;600",
+  "Lora":               "Lora:wght@400;500",
+  "DM Serif Display":   "DM+Serif+Display:ital@0",
+  "EB Garamond":        "EB+Garamond:wght@400;500",
+  "Inter":              "Inter:wght@400;500;600",
+  "Lato":               "Lato:wght@400;700",
+  "Source Sans 3":      "Source+Sans+3:wght@400;600",
+  "Nunito":             "Nunito:wght@400;600",
 };
 
 interface Props {
@@ -23,16 +27,23 @@ export default async function Home({ searchParams }: Props) {
   const themeVars = buildThemeVars(config.company.primaryColor);
 
   const titleFont = config.formTitleFont ?? "Cormorant Garamond";
-  const googleFontParam = GOOGLE_FONTS[titleFont];
-  const googleFontUrl = googleFontParam
-    ? `https://fonts.googleapis.com/css2?family=${googleFontParam}&display=swap`
+  const bodyFont  = config.formBodyFont ?? "";
+
+  const fontParams = [titleFont, bodyFont]
+    .filter((f) => f && GOOGLE_FONTS[f])
+    .map((f) => GOOGLE_FONTS[f])
+    .join("&family=");
+  const googleFontUrl = fontParams
+    ? `https://fonts.googleapis.com/css2?family=${fontParams}&display=swap`
     : null;
+
+  const bodyFontFamily = bodyFont ? `'${bodyFont}', system-ui, sans-serif` : undefined;
 
   return (
     <div id="embed-root" style={themeVars as React.CSSProperties}>
       <IframeResizer />
       {googleFontUrl && <link rel="stylesheet" href={googleFontUrl} />}
-      <div style={{ padding: "2rem 1.5rem", background: config.formBgColor || "transparent" }}>
+      <div style={{ padding: "2rem 1.5rem", background: config.formBgColor || "transparent", fontFamily: bodyFontFamily }}>
         {config.formTitle && (
           <h2
             style={{
@@ -40,7 +51,6 @@ export default async function Home({ searchParams }: Props) {
               fontFamily: `'${titleFont}', Georgia, serif`,
               fontSize: "2rem",
               fontWeight: 300,
-              fontStyle: "italic",
               letterSpacing: "0.02em",
               lineHeight: 1.3,
               color: "var(--text)",

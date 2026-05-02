@@ -10,18 +10,7 @@ export default function LogoutButton() {
   }
 
   return (
-    <button
-      onClick={handleLogout}
-      style={{
-        padding: "0.35rem 0.9rem",
-        border: "1px solid var(--border)",
-        borderRadius: "var(--radius-sm)",
-        background: "none",
-        color: "var(--muted)",
-        cursor: "pointer",
-        fontSize: "0.82rem",
-      }}
-    >
+    <button className="ew-logout-btn" onClick={handleLogout}>
       Abmelden
     </button>
   );

@@ -1,7 +1,7 @@
 "use client";
 import { useState } from "react";
 import { useFormStore, TOTAL_STEPS } from "@/store/form";
-import type { YogaConfig } from "@/lib/types";
+import type { EventConfig } from "@/lib/types";
 import Step1Veranstaltung from "@/components/steps/Step1Veranstaltung";
 import Step2Gruppe from "@/components/steps/Step2Gruppe";
 import Step3Ausstattung from "@/components/steps/Step3Ausstattung";
@@ -11,7 +11,7 @@ import Step5Abschluss from "@/components/steps/Step5Abschluss";
 const STEP_LABELS = ["Veranstaltung", "Gruppe", "Ausstattung", "Verpflegung", "Abschluss"];
 
 interface Props {
-  config: YogaConfig;
+  config: EventConfig;
   slug: string;
 }
 
@@ -96,48 +96,31 @@ export default function Wizard({ config, slug }: Props) {
           return (
             <div key={n} style={{ display: "flex", alignItems: "center", flex: n < TOTAL_STEPS ? 1 : undefined }}>
               <div style={{ display: "flex", flexDirection: "column", alignItems: "center", gap: "0.3rem" }}>
-                <div
-                  style={{
-                    width: "2rem",
-                    height: "2rem",
-                    borderRadius: "50%",
-                    display: "flex",
-                    alignItems: "center",
-                    justifyContent: "center",
-                    fontSize: "0.8rem",
-                    fontWeight: 700,
-                    background: done ? "var(--primary)" : active ? "var(--primary)" : "var(--bg2)",
-                    color: done || active ? "var(--btn-text)" : "var(--muted)",
-                    border: `2px solid ${active || done ? "var(--primary)" : "var(--border)"}`,
-                    transition: "all 0.2s",
-                  }}
-                >
+                <div style={{
+                  width: "2rem", height: "2rem", borderRadius: "50%",
+                  display: "flex", alignItems: "center", justifyContent: "center",
+                  fontSize: "0.8rem", fontWeight: 700,
+                  background: done || active ? "var(--primary)" : "var(--bg2)",
+                  color: done || active ? "var(--btn-text)" : "var(--muted)",
+                  border: `2px solid ${done || active ? "var(--primary)" : "var(--border)"}`,
+                  transition: "all 0.2s",
+                }}>
                   {done ? "✓" : n}
                 </div>
-                <span
-                  className="step-label"
-                  style={{
-                    fontSize: "0.7rem",
-                    color: active ? "var(--primary)" : "var(--muted)",
-                    fontWeight: active ? 600 : 400,
-                    whiteSpace: "nowrap",
-                  }}
-                >
+                <span className="step-label" style={{
+                  fontSize: "0.7rem", whiteSpace: "nowrap",
+                  color: active ? "var(--primary)" : "var(--muted)",
+                  fontWeight: active ? 600 : 400,
+                }}>
                   {STEP_LABELS[i]}
                 </span>
               </div>
               {n < TOTAL_STEPS && (
-                <div
-                  className="step-conn"
-                  style={{
-                    flex: 1,
-                    height: "2px",
-                    background: done ? "var(--primary)" : "var(--border)",
-                    margin: "0 0.25rem",
-                    marginBottom: "1.2rem",
-                    transition: "background 0.2s",
-                  }}
-                />
+                <div className="step-conn" style={{
+                  flex: 1, height: "2px", margin: "0 0.25rem", marginBottom: "1.2rem",
+                  background: done ? "var(--primary)" : "var(--border)",
+                  transition: "background 0.2s",
+                }} />
               )}
             </div>
           );

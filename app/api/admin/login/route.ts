@@ -1,9 +1,14 @@
 import { NextRequest, NextResponse } from "next/server";
 import { compareSync } from "bcryptjs";
-import { signToken, cookieName } from "@/lib/auth";
+import { signToken, cookieName, cookieOptions } from "@/lib/auth";
 import { prisma } from "@/lib/db";
+import { rateLimit, getIp } from "@/lib/ratelimit";
 
 export async function POST(req: NextRequest) {
+  if (!rateLimit(`login:${getIp(req)}`, 5, 15 * 60 * 1000)) {
+    return NextResponse.json({ error: "Zu viele Versuche. Bitte warte 15 Minuten." }, { status: 429 });
+  }
+
   const { email, password } = await req.json();
 
   const user = await prisma.user.findUnique({
@@ -33,12 +38,6 @@ export async function POST(req: NextRequest) {
   });
 
   const res = NextResponse.json({ ok: true });
-  res.cookies.set(cookieName(), token, {
-    httpOnly: true,
-    secure: process.env.NODE_ENV === "production",
-    sameSite: "lax",
-    maxAge: 60 * 60 * 24 * 7,
-    path: "/",
-  });
+  res.cookies.set(cookieName(), token, cookieOptions());
   return res;
 }

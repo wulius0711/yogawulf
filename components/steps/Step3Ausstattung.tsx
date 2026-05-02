@@ -1,8 +1,8 @@
 "use client";
 import { useFormStore } from "@/store/form";
-import type { YogaConfig } from "@/lib/types";
+import type { EventConfig } from "@/lib/types";
 
-interface Props { config: YogaConfig }
+interface Props { config: EventConfig }
 
 function YesNo({ label, value, onChange }: { label: string; value: boolean | null; onChange: (v: boolean) => void }) {
   return (

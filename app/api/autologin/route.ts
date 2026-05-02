@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { createHmac, timingSafeEqual } from 'crypto';
 import { prisma } from '@/lib/db';
-import { signToken, cookieName } from '@/lib/auth';
+import { signToken, cookieName, cookieOptions } from '@/lib/auth';
 
 const TOKEN_TTL_MS = 60_000;
 
@@ -58,12 +58,6 @@ export async function GET(req: NextRequest) {
   });
 
   const res = NextResponse.redirect(new URL('/admin', req.url));
-  res.cookies.set(cookieName(), token, {
-    httpOnly: true,
-    secure: process.env.NODE_ENV === 'production',
-    sameSite: 'lax',
-    maxAge: 60 * 60 * 24 * 7,
-    path: '/',
-  });
+  res.cookies.set(cookieName(), token, cookieOptions());
   return res;
 }
