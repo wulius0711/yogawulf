@@ -347,7 +347,7 @@ export default function ConfigEditor({ initialConfig, slug }: Props) {
                 ? <span style={{ fontWeight: 400, fontSize: "0.72rem", textTransform: "none", letterSpacing: 0, color: "var(--muted)", marginLeft: "0.4rem" }}>({hint})</span>
                 : null;
               return (
-                <div key={step.label} style={{ marginBottom: "1.25rem" }}>
+                <div key={step.label} style={{ marginBottom: "2.25rem" }}>
                   <div style={{ fontSize: "0.78rem", fontWeight: 700, color: "var(--text)", textTransform: "uppercase", letterSpacing: "0.07em", marginBottom: "0.6rem", borderBottom: "1px solid var(--border)", paddingBottom: "0.4rem", display: "flex", alignItems: "baseline" }}>
                     {step.label}{hintSpan(stepHint)}
                   </div>
