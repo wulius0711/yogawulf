@@ -331,22 +331,25 @@ export default function ConfigEditor({ initialConfig, slug }: Props) {
                 ["zimmerwunsch", "Zimmerwunsch"],
               ]},
               { label: "Schritt 5 – Abschluss", fields: [
-                ["wuenscheRahmenprogramm", "Wünsche Rahmenprogramm"],
-                ["abrechnung",            "Abrechnung (Optionen unten wählbar)"],
-                ["zahlung",               "Zahlung (Optionen unten wählbar)"],
-                ["anreise",               "Anreise (Optionen unten wählbar)"],
-                ["barrierefreiheit",      "Besondere Bedürfnisse"],
-                ["budget",                "Budgetrahmen (Optionen unten wählbar)"],
-                ["quelle",                "Wie habt ihr uns gefunden? (Optionen unten wählbar)"],
+                ["wuenscheRahmenprogramm", "Wünsche Rahmenprogramm",         ""],
+                ["abrechnung",            "Abrechnung",                       "Optionen unten wählbar"],
+                ["zahlung",               "Zahlung",                          "Optionen unten wählbar"],
+                ["anreise",               "Anreise",                          "Optionen unten wählbar"],
+                ["barrierefreiheit",      "Besondere Bedürfnisse",            ""],
+                ["budget",                "Budgetrahmen",                     "Optionen unten wählbar"],
+                ["quelle",                "Wie habt ihr uns gefunden?",       "Optionen unten wählbar"],
               ]},
-            ] as { label: string; fields: [keyof NonNullable<EventConfig["formFields"]>, string][] }[]).map((step) => {
+            ] as { label: string; hint?: string; fields: [keyof NonNullable<EventConfig["formFields"]>, string, string][] }[]).map((step) => {
               const isStep3 = step.label.includes("Ausstattung");
+              const stepHint = isStep3 || step.label.includes("Unterkunft") ? "Optionen unten wählbar" : "";
               const extraTags = isStep3 ? config.ausstattungOptions : [];
+              const hintSpan = (hint: string) => hint
+                ? <span style={{ fontWeight: 400, fontSize: "0.72rem", textTransform: "none", letterSpacing: 0, color: "var(--muted)", marginLeft: "0.4rem" }}>({hint})</span>
+                : null;
               return (
                 <div key={step.label} style={{ marginBottom: "1.25rem" }}>
-                  <div style={{ fontSize: "0.78rem", fontWeight: 700, color: "var(--text)", textTransform: "uppercase", letterSpacing: "0.07em", marginBottom: "0.6rem", borderBottom: "1px solid var(--border)", paddingBottom: "0.4rem", display: "flex", alignItems: "baseline", gap: "0.5rem" }}>
-                    {step.label}
-                    {(isStep3 || step.label.includes("Unterkunft")) && <span style={{ fontWeight: 400, fontSize: "0.72rem", textTransform: "none", letterSpacing: 0, color: "var(--muted)" }}>(Optionen unten wählbar)</span>}
+                  <div style={{ fontSize: "0.78rem", fontWeight: 700, color: "var(--text)", textTransform: "uppercase", letterSpacing: "0.07em", marginBottom: "0.6rem", borderBottom: "1px solid var(--border)", paddingBottom: "0.4rem", display: "flex", alignItems: "baseline" }}>
+                    {step.label}{hintSpan(stepHint)}
                   </div>
                   {extraTags.length > 0 && (
                     <div style={{ display: "flex", flexWrap: "wrap", gap: "0.4rem", marginBottom: step.fields.length > 0 ? "0.75rem" : 0 }}>
@@ -357,10 +360,10 @@ export default function ConfigEditor({ initialConfig, slug }: Props) {
                   )}
                   {step.fields.length > 0 && (
                     <div style={{ display: "grid", gridTemplateColumns: "repeat(3, 1fr)", gap: "0.1rem 0" }}>
-                      {step.fields.map(([field, label]) => (
+                      {step.fields.map(([field, label, hint]) => (
                         <label key={field} style={{ display: "flex", alignItems: "center", gap: "0.5rem", padding: "0.3rem 0", cursor: "pointer", fontSize: "0.875rem", color: "var(--text)", fontWeight: 400 }}>
                           <input type="checkbox" checked={fieldEnabled(field)} onChange={(e) => setFormField(field, e.target.checked)} style={{ width: "auto", cursor: "pointer", flexShrink: 0 }} />
-                          {label}
+                          <span>{label}{hintSpan(hint)}</span>
                         </label>
                       ))}
                     </div>
