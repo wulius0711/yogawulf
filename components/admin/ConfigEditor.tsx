@@ -200,9 +200,9 @@ export default function ConfigEditor({ initialConfig, slug }: Props) {
   const tabStyle = (t: Tab) => ({
     padding: "0.5rem 1rem",
     border: "none",
-    borderBottom: `2px solid ${tab === t ? "#818cf8" : "transparent"}`,
+    borderBottom: `2px solid ${tab === t ? "var(--primary)" : "transparent"}`,
     background: "none",
-    color: tab === t ? "#818cf8" : "#ffffff",
+    color: tab === t ? "var(--primary)" : "var(--muted)",
     cursor: "pointer",
     fontWeight: tab === t ? 600 : 400,
     fontSize: "0.88rem",
