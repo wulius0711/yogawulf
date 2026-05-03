@@ -43,9 +43,10 @@ export default async function Home({ searchParams }: Props) {
     <div id="embed-root" style={themeVars as React.CSSProperties}>
       <IframeResizer />
       {googleFontUrl && <link rel="stylesheet" href={googleFontUrl} />}
-      <div style={{ padding: "2rem 1.5rem", background: config.formBgColor || "transparent", fontFamily: bodyFontFamily }}>
+      <div className="ew-widget-wrap" style={{ padding: "2rem 1.5rem", background: config.formBgColor || "transparent", fontFamily: bodyFontFamily }}>
         {config.formTitle && (
           <h2
+            className="ew-widget-title"
             style={{
               textAlign: "center",
               fontFamily: `'${titleFont}', Georgia, serif`,

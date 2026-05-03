@@ -25,12 +25,9 @@ export default function Step2Gruppe({ config }: Props) {
       </div>
 
       {show(config, "telefon") && (
-        <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(min(180px, 100%), 1fr))", gap: "1rem" }}>
-          <div>
-            <label>Telefon</label>
-            <input type="tel" placeholder="+43 …" value={form.telefon} onChange={(e) => setField("telefon", e.target.value)} />
-          </div>
-          <div />
+        <div>
+          <label>Telefon</label>
+          <input type="tel" placeholder="+43 …" value={form.telefon} onChange={(e) => setField("telefon", e.target.value)} />
         </div>
       )}
 
@@ -52,18 +49,15 @@ export default function Step2Gruppe({ config }: Props) {
       )}
 
       {show(config, "sprache") && (
-        <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(min(180px, 100%), 1fr))", gap: "1rem" }}>
-          <div>
-            <label>Sprache der Gruppe</label>
-            <select value={form.sprache} onChange={(e) => setField("sprache", e.target.value)}>
-              <option value="">Auswählen</option>
-              <option value="Deutsch">Deutsch</option>
-              <option value="Englisch">Englisch</option>
-              <option value="Gemischt">Gemischt</option>
-              <option value="Andere">Andere</option>
-            </select>
-          </div>
-          <div />
+        <div>
+          <label>Sprache der Gruppe</label>
+          <select value={form.sprache} onChange={(e) => setField("sprache", e.target.value)}>
+            <option value="">Auswählen</option>
+            <option value="Deutsch">Deutsch</option>
+            <option value="Englisch">Englisch</option>
+            <option value="Gemischt">Gemischt</option>
+            <option value="Andere">Andere</option>
+          </select>
         </div>
       )}
     </div>

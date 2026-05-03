@@ -148,6 +148,7 @@ export default function Wizard({ config, slug }: Props) {
 
       {/* Navigation */}
       <div
+        className="ew-wizard-nav"
         style={{
           display: "flex",
           justifyContent: "space-between",
@@ -173,7 +174,7 @@ export default function Wizard({ config, slug }: Props) {
           ← Zurück
         </button>
 
-        <span style={{ fontSize: "0.8rem", color: "var(--muted)" }}>
+        <span className="ew-step-counter" style={{ fontSize: "0.8rem", color: "var(--muted)" }}>
           {step} / {TOTAL_STEPS}
         </span>
 

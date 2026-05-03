@@ -44,14 +44,14 @@ function EmbedTab({ slug }: { slug: string }) {
         value={snippet}
         rows={6}
         onClick={(e) => (e.target as HTMLTextAreaElement).select()}
-        style={{ fontFamily: "monospace", fontSize: "0.78rem", resize: "vertical", background: "var(--bg2)", color: "var(--text)" }}
+        style={{ fontFamily: "monospace", fontSize: "0.78rem", resize: "vertical", background: "var(--bg2)", color: "var(--text)", wordBreak: "break-all", overflowWrap: "break-word" }}
       />
       <button
         type="button"
         onClick={() => navigator.clipboard.writeText(snippet)}
-        style={{ alignSelf: "flex-end", padding: "0.55rem 1.25rem", background: "var(--primary)", color: "var(--btn-text)", border: "none", borderRadius: "var(--radius-sm)", fontWeight: 600, cursor: "pointer", fontSize: "0.85rem" }}
+        style={{ padding: "0.65rem 1.25rem", background: "var(--primary)", color: "var(--btn-text)", border: "none", borderRadius: "var(--radius-sm)", fontWeight: 600, cursor: "pointer", fontSize: "0.85rem", width: "100%" }}
       >
-        Kopieren
+        Code kopieren
       </button>
     </div>
   );

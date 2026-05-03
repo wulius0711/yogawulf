@@ -12,7 +12,7 @@ export default function Step3Ausstattung({ config }: Props) {
   return (
     <div style={{ display: "flex", flexDirection: "column", gap: "1.25rem" }}>
       {config.ausstattungOptions?.length > 0 && (
-        <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fill, minmax(160px, 1fr))", gap: "0.5rem" }}>
+        <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fill, minmax(min(140px, 100%), 1fr))", gap: "0.5rem" }}>
           {config.ausstattungOptions.map((opt) => {
             const checked = form.ausstattungExtra.includes(opt);
             return (
