@@ -307,55 +307,76 @@ button:active:not(:disabled) {
 /* Config tabs style override */
 .admin-shell .config-tabs { flex-wrap: wrap; }
 
-/* Mobile: sidebar → top bar */
+/* Mobile topbar + hamburger (hidden on desktop) */
+.ew-topbar { display: none; }
+.ew-hamburger { display: none; }
+
+/* Mobile: collapsible drawer */
 @media (max-width: 768px) {
   .admin-shell { flex-direction: column !important; }
 
-  .ew-sidebar {
-    width: 100%;
-    height: auto;
-    position: static;
-    border-right: none;
-    border-bottom: 1px solid var(--border);
-    flex-direction: row;
+  .ew-topbar {
+    display: flex;
     align-items: center;
+    gap: 0.75rem;
+    height: 52px;
     padding: 0 1rem;
-    gap: 0.5rem;
-    overflow-x: auto;
-    overflow-y: visible;
-  }
-
-  .ew-sidebar-brand {
-    padding: 0.75rem 0;
-    border-bottom: none;
+    background: var(--surface);
+    border-bottom: 1px solid var(--border);
+    position: sticky;
+    top: 0;
+    z-index: 100;
     flex-shrink: 0;
   }
 
-  .ew-sidebar-nav {
-    flex-direction: row;
-    flex: 1;
-    padding: 0;
-    gap: 0;
-    overflow-x: auto;
+  .ew-topbar-brand {
+    font-weight: 700;
+    font-size: 1rem;
+    color: var(--primary);
+    letter-spacing: -0.03em;
   }
 
-  .ew-nav-link {
-    padding: 0.75rem 0.75rem;
-    border-radius: 0;
-    border-bottom: 2px solid transparent;
-    white-space: nowrap;
+  .ew-hamburger {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 36px;
+    height: 36px;
+    border: none;
+    border-radius: 7px;
+    background: none;
+    color: var(--text);
+    cursor: pointer;
+    font-size: 1.1rem;
     flex-shrink: 0;
+    font-family: inherit;
   }
 
-  .ew-nav-link.active {
-    background: transparent;
-    border-bottom-color: var(--primary);
+  .ew-hamburger:hover { background: var(--bg2); }
+
+  /* Sidebar becomes a fixed drawer */
+  .ew-sidebar {
+    position: fixed;
+    top: 0;
+    left: 0;
+    height: 100vh;
+    width: 260px;
+    z-index: 200;
+    transform: translateX(-100%);
+    transition: transform 0.22s ease;
+    box-shadow: 4px 0 24px rgba(0, 0, 0, 0.18);
   }
 
-  .ew-sidebar-footer {
-    padding: 0.5rem 0;
-    border-top: none;
-    flex-shrink: 0;
+  .ew-sidebar.ew-sidebar--open {
+    transform: translateX(0);
+  }
+
+  /* Backdrop */
+  .ew-nav-backdrop {
+    position: fixed;
+    inset: 0;
+    background: rgba(0, 0, 0, 0.4);
+    z-index: 199;
   }
 
   .ew-shell-main { padding: 1.5rem 1rem; }
