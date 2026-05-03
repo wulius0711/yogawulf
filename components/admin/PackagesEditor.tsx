@@ -177,11 +177,6 @@ export default function PackagesEditor() {
           </div>
         </div>
 
-        <label style={{ display: "flex", alignItems: "center", gap: "0.5rem", cursor: "pointer", fontSize: "0.875rem" }}>
-          <input type="checkbox" checked={form.isActive} onChange={(e) => set("isActive", e.target.checked)} />
-          Aktiv (im Buchungsformular sichtbar)
-        </label>
-
         {error && <p style={{ color: "#dc2626", fontSize: "0.85rem", margin: 0 }}>{error}</p>}
 
         <div style={{ display: "flex", justifyContent: "flex-end", gap: "0.5rem" }}>
