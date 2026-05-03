@@ -360,7 +360,7 @@ export default function ConfigEditor({ initialConfig, slug }: Props) {
                       </div>
                     )}
                     {step.fields.length > 0 && (
-                      <div style={{ display: "grid", gridTemplateColumns: "repeat(3, 1fr)", gap: "0.1rem 0" }}>
+                      <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fill, minmax(min(180px, 100%), 1fr))", gap: "0.1rem 0" }}>
                         {step.fields.map(([field, label, hint]) => (
                           <label key={field} style={{ display: "flex", alignItems: "center", gap: "0.5rem", padding: "0.3rem 0", cursor: "pointer", fontSize: "0.875rem", color: "var(--text)", fontWeight: 400 }}>
                             <input type="checkbox" checked={fieldEnabled(field)} onChange={(e) => setFormField(field, e.target.checked)} style={{ width: "auto", cursor: "pointer", flexShrink: 0 }} />
@@ -374,7 +374,7 @@ export default function ConfigEditor({ initialConfig, slug }: Props) {
               );
             })}
 
-            <div style={{ borderTop: "1px solid var(--border)", marginTop: "1.25rem", paddingTop: "1.25rem", display: "grid", gridTemplateColumns: "1fr 1fr", gap: "1.25rem 2rem" }}>
+            <div style={{ borderTop: "1px solid var(--border)", marginTop: "1.25rem", paddingTop: "1.25rem", display: "grid", gridTemplateColumns: "repeat(auto-fill, minmax(min(260px, 100%), 1fr))", gap: "1.25rem 2rem" }}>
               <OptionsEditor field="verpflegungOptions" label="Verpflegung-Optionen" />
               <OptionsEditor field="zimmerwunschOptions" label="Zimmerwunsch-Optionen" />
               <OptionsEditor field="abrechnungOptions" label="Abrechnungs-Optionen" />
