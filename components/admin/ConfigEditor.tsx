@@ -251,43 +251,47 @@ export default function ConfigEditor({ initialConfig, slug }: Props) {
             <Field label="Formular-Titel (optional, leer lassen zum Ausblenden)">
               <input type="text" value={config.formTitle} onChange={(e) => set("formTitle", e.target.value)} placeholder="z.B. Du hast Interesse an einem Retreat bei uns?" />
             </Field>
-            <Field label="Primärfarbe">
-              <div style={{ display: "flex", gap: "0.5rem", alignItems: "center" }}>
-                <input type="color" value={config.company.primaryColor} onChange={(e) => setCompany("primaryColor", e.target.value)} style={{ width: "3rem", height: "2.5rem", padding: "0.2rem", cursor: "pointer" }} />
-                <input type="text" value={config.company.primaryColor} onChange={(e) => setCompany("primaryColor", e.target.value)} style={{ flex: 1 }} />
-              </div>
-            </Field>
-            <Field label="Hintergrundfarbe (leer = transparent)">
-              <div style={{ display: "flex", gap: "0.5rem", alignItems: "center" }}>
-                <input type="color" value={config.formBgColor || "#f5f0e8"} onChange={(e) => set("formBgColor", e.target.value)} style={{ width: "3rem", height: "2.5rem", padding: "0.2rem", cursor: "pointer" }} />
-                <input type="text" value={config.formBgColor ?? ""} onChange={(e) => set("formBgColor", e.target.value)} placeholder="transparent" style={{ flex: 1 }} />
-                {config.formBgColor && (
-                  <button type="button" onClick={() => set("formBgColor", "")} style={{ padding: "0.5rem 0.75rem", border: "1px solid var(--border)", borderRadius: "var(--radius-sm)", background: "none", color: "var(--muted)", cursor: "pointer", fontSize: "0.8rem", whiteSpace: "nowrap" }}>
-                    Zurücksetzen
-                  </button>
-                )}
-              </div>
-            </Field>
-            <Field label="Schriftart Überschrift">
-              <select value={config.formTitleFont ?? "Cormorant Garamond"} onChange={(e) => set("formTitleFont", e.target.value)}>
-                <option value="Cormorant Garamond">Cormorant Garamond – elegant, dünn</option>
-                <option value="Playfair Display">Playfair Display – klassisch, serif</option>
-                <option value="Lora">Lora – warm, lesbar</option>
-                <option value="DM Serif Display">DM Serif Display – modern, markant</option>
-                <option value="EB Garamond">EB Garamond – zeitlos, fein</option>
-                <option value="Georgia">Georgia – systemfont, schlicht</option>
-              </select>
-            </Field>
-            <Field label="Schriftart Fließtext">
-              <select value={config.formBodyFont ?? ""} onChange={(e) => set("formBodyFont", e.target.value)}>
-                <option value="">System UI – Standard (sans-serif)</option>
-                <option value="Inter">Inter – modern, neutral</option>
-                <option value="Lato">Lato – freundlich, rund</option>
-                <option value="Source Sans 3">Source Sans 3 – klar, lesbar</option>
-                <option value="Nunito">Nunito – weich, warm</option>
-                <option value="Lora">Lora – klassisch, serif</option>
-              </select>
-            </Field>
+            <div className="grid sm:grid-cols-2 gap-4" style={{ marginBottom: "1rem" }}>
+              <Field label="Primärfarbe">
+                <div style={{ display: "flex", gap: "0.5rem", alignItems: "center" }}>
+                  <input type="color" value={config.company.primaryColor} onChange={(e) => setCompany("primaryColor", e.target.value)} style={{ width: "3rem", height: "2.5rem", padding: "0.2rem", cursor: "pointer" }} />
+                  <input type="text" value={config.company.primaryColor} onChange={(e) => setCompany("primaryColor", e.target.value)} style={{ flex: 1 }} />
+                </div>
+              </Field>
+              <Field label="Hintergrundfarbe (leer = transparent)">
+                <div style={{ display: "flex", gap: "0.5rem", alignItems: "center" }}>
+                  <input type="color" value={config.formBgColor || "#f5f0e8"} onChange={(e) => set("formBgColor", e.target.value)} style={{ width: "3rem", height: "2.5rem", padding: "0.2rem", cursor: "pointer" }} />
+                  <input type="text" value={config.formBgColor ?? ""} onChange={(e) => set("formBgColor", e.target.value)} placeholder="transparent" style={{ flex: 1 }} />
+                  {config.formBgColor && (
+                    <button type="button" onClick={() => set("formBgColor", "")} style={{ padding: "0.5rem 0.75rem", border: "1px solid var(--border)", borderRadius: "var(--radius-sm)", background: "none", color: "var(--muted)", cursor: "pointer", fontSize: "0.8rem", whiteSpace: "nowrap" }}>
+                      ×
+                    </button>
+                  )}
+                </div>
+              </Field>
+            </div>
+            <div className="grid sm:grid-cols-2 gap-4" style={{ marginBottom: "1rem" }}>
+              <Field label="Schriftart Überschrift">
+                <select value={config.formTitleFont ?? "Cormorant Garamond"} onChange={(e) => set("formTitleFont", e.target.value)}>
+                  <option value="Cormorant Garamond">Cormorant Garamond – elegant, dünn</option>
+                  <option value="Playfair Display">Playfair Display – klassisch, serif</option>
+                  <option value="Lora">Lora – warm, lesbar</option>
+                  <option value="DM Serif Display">DM Serif Display – modern, markant</option>
+                  <option value="EB Garamond">EB Garamond – zeitlos, fein</option>
+                  <option value="Georgia">Georgia – systemfont, schlicht</option>
+                </select>
+              </Field>
+              <Field label="Schriftart Fließtext">
+                <select value={config.formBodyFont ?? ""} onChange={(e) => set("formBodyFont", e.target.value)}>
+                  <option value="">System UI – Standard (sans-serif)</option>
+                  <option value="Inter">Inter – modern, neutral</option>
+                  <option value="Lato">Lato – freundlich, rund</option>
+                  <option value="Source Sans 3">Source Sans 3 – klar, lesbar</option>
+                  <option value="Nunito">Nunito – weich, warm</option>
+                  <option value="Lora">Lora – klassisch, serif</option>
+                </select>
+              </Field>
+            </div>
           </Section>
 
           <Section title="Widget-Features">
