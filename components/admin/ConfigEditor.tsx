@@ -352,8 +352,8 @@ export default function ConfigEditor({ initialConfig, slug }: Props) {
               {
                 label: "Schritt 4 – Unterkunft",
                 fields: [
-                  { key: "verpflegung" as const,  label: "Verpflegung" },
-                  { key: "zimmerwunsch" as const,  label: "Zimmerwunsch" },
+                  { key: "verpflegung" as const,  label: "Verpflegung",  hint: "Optionen ↓" },
+                  { key: "zimmerwunsch" as const,  label: "Zimmerwunsch", hint: "Optionen ↓" },
                 ],
               },
               {
