@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import { Resend } from "resend";
+import { randomBytes } from "crypto";
 import { loadConfigFromDB } from "@/lib/loadConfig";
 import { prisma } from "@/lib/db";
 import type { InquiryFormData } from "@/lib/types";
@@ -112,22 +113,26 @@ export async function POST(req: NextRequest) {
     </div>
   `;
 
-  // Save inquiry first to get the ID for the iCal link
+  // Save inquiry first to get the ID and cancelToken for the email links
   let inquiryId: string | null = null;
+  let savedCancelToken: string | null = null;
   try {
     const client = await prisma.client.findUnique({ where: { slug } });
     if (client) {
       const participantCount = parseInt(body.personenAnzahl ?? "0") || 0;
+      const cancelToken = randomBytes(24).toString("hex");
       const inquiry = await prisma.inquiry.create({
         data: {
           clientId: client.id,
           data: JSON.stringify(body),
           status: "neu",
           participantCount,
+          cancelToken,
           ...(body.packageId ? { packageId: body.packageId } : {}),
         },
       });
       inquiryId = inquiry.id;
+      savedCancelToken = cancelToken;
     }
   } catch (e) {
     console.error("Failed to save inquiry:", e);
@@ -135,8 +140,9 @@ export async function POST(req: NextRequest) {
 
   const host = req.headers.get("host") ?? "";
   const proto = host.startsWith("localhost") ? "http" : "https";
+
   const icalLink = inquiryId
-    ? `<p style="margin-top:1.5rem"><a href="${proto}://${host}/api/ical/${inquiryId}" style="display:inline-block;padding:10px 20px;background:#6366f1;color:#fff;border-radius:8px;text-decoration:none;font-size:0.875rem;font-weight:600">📅 Zum Kalender hinzufügen</a></p>`
+    ? `<p style="margin-top:1.5rem;display:flex;gap:10px;flex-wrap:wrap"><a href="${proto}://${host}/api/ical/${inquiryId}" style="display:inline-block;padding:10px 20px;background:#6366f1;color:#fff;border-radius:8px;text-decoration:none;font-size:0.875rem;font-weight:600">📅 Zum Kalender hinzufügen</a>${savedCancelToken ? `<a href="${proto}://${host}/api/cancel/${savedCancelToken}" style="display:inline-block;padding:10px 20px;background:transparent;color:#6b7280;border:1px solid #e5e7eb;border-radius:8px;text-decoration:none;font-size:0.875rem;font-weight:600">Anfrage stornieren</a>` : ""}</p>`
     : "";
 
   const confirmationHtmlWithIcal = confirmationHtml.replace(

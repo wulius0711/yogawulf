@@ -65,6 +65,8 @@ model Inquiry {
   participantCount Int       @default(0)
   invoices         Invoice[]
   reminderSentAt   DateTime?
+  cancelToken      String?   @unique
+  cancelledAt      DateTime?
   createdAt        DateTime  @default(now())
 }
 
