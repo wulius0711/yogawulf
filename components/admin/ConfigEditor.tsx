@@ -313,76 +313,94 @@ export default function ConfigEditor({ initialConfig, slug }: Props) {
           </Section>
 
           <Section title="Felder">
-            {([
-              { label: "Schritt 1 – Veranstaltung", fields: [
-                ["uhrzeiten", "Uhrzeiten (Beginn / Ende)"],
-              ]},
-              { label: "Schritt 2 – Gruppe", fields: [
-                ["personenAnzahl", "Anzahl Teilnehmer:innen"],
-                ["leiterinnen",    "Leiter:innen"],
-                ["telefon",        "Telefon"],
-                ["sprache",        "Sprache der Gruppe"],
-              ]},
-              { label: "Schritt 3 – Ausstattung", fields: [
-                ["sonstigesEquipment", "Sonstiges Equipment (Freitextfeld)"],
-              ]},
-              { label: "Schritt 4 – Unterkunft", fields: [
-                ["verpflegung",  "Verpflegung"],
-                ["zimmerwunsch", "Zimmerwunsch"],
-              ]},
-              { label: "Schritt 5 – Abschluss", fields: [
-                ["wuenscheRahmenprogramm", "Wünsche Rahmenprogramm",         ""],
-                ["abrechnung",            "Abrechnung",                       "Optionen unten wählbar"],
-                ["zahlung",               "Zahlung",                          "Optionen unten wählbar"],
-                ["anreise",               "Anreise",                          "Optionen unten wählbar"],
-                ["barrierefreiheit",      "Besondere Bedürfnisse",            ""],
-                ["budget",                "Budgetrahmen",                     "Optionen unten wählbar"],
-                ["quelle",                "Wie habt ihr uns gefunden?",       "Optionen unten wählbar"],
-              ]},
-            ] as { label: string; hint?: string; fields: [keyof NonNullable<EventConfig["formFields"]>, string, string][] }[]).map((step) => {
-              const isStep3 = step.label.includes("Ausstattung");
-              const stepHint = isStep3 || step.label.includes("Unterkunft") ? "Optionen unten wählbar" : "";
-              const extraTags = isStep3 ? config.ausstattungOptions : [];
-              const hintSpan = (hint: string) => hint
-                ? <span style={{ fontWeight: 400, fontSize: "0.72rem", textTransform: "none", letterSpacing: 0, color: "var(--muted)", marginLeft: "0.4rem" }}>({hint})</span>
-                : null;
-              return (
-                <div key={step.label} style={{ marginBottom: "2.25rem" }}>
-                  <div style={{ fontSize: "0.78rem", fontWeight: 700, color: "var(--text)", textTransform: "uppercase", letterSpacing: "0.07em", marginBottom: "0.6rem", borderBottom: "1px solid var(--border)", paddingBottom: "0.4rem", display: "flex", alignItems: "baseline" }}>
-                    {step.label}{hintSpan(stepHint)}
-                  </div>
-                  <div style={{ paddingLeft: "1rem" }}>
-                    {extraTags.length > 0 && (
-                      <div style={{ display: "flex", flexWrap: "wrap", gap: "0.4rem", marginBottom: step.fields.length > 0 ? "0.75rem" : 0 }}>
-                        {extraTags.map((tag) => (
-                          <span key={tag} style={{ fontSize: "0.85rem", padding: "0.35rem 0.85rem", border: "1px solid var(--border)", borderRadius: "var(--radius-sm)", color: "var(--text)", background: "var(--bg2)" }}>{tag}</span>
-                        ))}
-                      </div>
-                    )}
-                    {step.fields.length > 0 && (
-                      <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fill, minmax(min(180px, 100%), 1fr))", gap: "0.1rem 0" }}>
-                        {step.fields.map(([field, label, hint]) => (
-                          <label key={field} style={{ display: "flex", alignItems: "center", gap: "0.5rem", padding: "0.3rem 0", cursor: "pointer", fontSize: "0.875rem", color: "var(--text)", fontWeight: 400 }}>
-                            <input type="checkbox" checked={fieldEnabled(field)} onChange={(e) => setFormField(field, e.target.checked)} style={{ width: "auto", cursor: "pointer", flexShrink: 0 }} />
-                            <span>{label}{hintSpan(hint)}</span>
-                          </label>
-                        ))}
-                      </div>
-                    )}
-                  </div>
-                </div>
-              );
-            })}
+            <p style={{ margin: "0 0 1.5rem", fontSize: "0.82rem", color: "var(--muted)" }}>
+              Aktiviere oder deaktiviere einzelne Felder im Buchungsformular.
+            </p>
 
-            <div className="ew-options-grid" style={{ borderTop: "1px solid var(--border)", marginTop: "1.25rem", paddingTop: "1.25rem", display: "grid", gridTemplateColumns: "repeat(auto-fill, minmax(min(260px, 100%), 1fr))", gap: "1.25rem 2rem" }}>
-              <OptionsEditor field="verpflegungOptions" label="Verpflegung-Optionen" />
-              <OptionsEditor field="zimmerwunschOptions" label="Zimmerwunsch-Optionen" />
-              <OptionsEditor field="abrechnungOptions" label="Abrechnungs-Optionen" />
-              <OptionsEditor field="ausstattungOptions" label="Ausstattungs-Optionen" />
-              <OptionsEditor field="zahlungOptions" label="Zahlungs-Optionen" />
-              <OptionsEditor field="anreiseOptions" label="Anreise-Optionen" />
-              <OptionsEditor field="budgetOptions" label="Budget-Optionen" />
-              <OptionsEditor field="quelleOptions" label="Quelle-Optionen" />
+            {([
+              {
+                label: "Schritt 1 – Veranstaltung",
+                fields: [
+                  { key: "uhrzeiten" as const, label: "Uhrzeiten (Beginn / Ende)" },
+                ],
+              },
+              {
+                label: "Schritt 2 – Gruppe",
+                fields: [
+                  { key: "personenAnzahl" as const, label: "Anzahl Teilnehmer:innen" },
+                  { key: "leiterinnen" as const,    label: "Leiter:innen" },
+                  { key: "telefon" as const,        label: "Telefon" },
+                  { key: "sprache" as const,        label: "Sprache der Gruppe" },
+                ],
+              },
+              {
+                label: "Schritt 3 – Ausstattung",
+                fields: [
+                  { key: "sonstigesEquipment" as const, label: "Sonstiges Equipment (Freitextfeld)" },
+                ],
+              },
+              {
+                label: "Schritt 4 – Unterkunft",
+                fields: [
+                  { key: "verpflegung" as const,  label: "Verpflegung" },
+                  { key: "zimmerwunsch" as const,  label: "Zimmerwunsch" },
+                ],
+              },
+              {
+                label: "Schritt 5 – Abschluss",
+                fields: [
+                  { key: "wuenscheRahmenprogramm" as const, label: "Wünsche Rahmenprogramm" },
+                  { key: "abrechnung" as const,             label: "Abrechnung",                  hint: "Optionen ↓" },
+                  { key: "zahlung" as const,                label: "Zahlung",                      hint: "Optionen ↓" },
+                  { key: "anreise" as const,                label: "Anreise",                      hint: "Optionen ↓" },
+                  { key: "barrierefreiheit" as const,       label: "Besondere Bedürfnisse" },
+                  { key: "budget" as const,                 label: "Budgetrahmen",                 hint: "Optionen ↓" },
+                  { key: "quelle" as const,                 label: "Wie habt ihr uns gefunden?",   hint: "Optionen ↓" },
+                ],
+              },
+            ] as { label: string; fields: { key: keyof NonNullable<EventConfig["formFields"]>; label: string; hint?: string }[] }[]).map((step) => (
+              <div key={step.label} style={{ marginBottom: "1.5rem" }}>
+                <div style={{
+                  fontSize: "0.72rem", fontWeight: 700, textTransform: "uppercase",
+                  letterSpacing: "0.07em", color: "var(--muted)",
+                  paddingBottom: "0.5rem", marginBottom: "0.75rem",
+                  borderBottom: "1px solid var(--border)",
+                }}>
+                  {step.label}
+                </div>
+                <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fill, minmax(min(220px, 100%), 1fr))", gap: "0.5rem 1.5rem" }}>
+                  {step.fields.map(({ key, label, hint }) => (
+                    <label key={key} style={{ display: "flex", alignItems: "flex-start", gap: "0.55rem", cursor: "pointer" }}>
+                      <input
+                        type="checkbox"
+                        checked={fieldEnabled(key)}
+                        onChange={(e) => setFormField(key, e.target.checked)}
+                        style={{ width: "auto", cursor: "pointer", flexShrink: 0, marginTop: "0.2rem" }}
+                      />
+                      <span style={{ fontSize: "0.875rem", lineHeight: 1.4 }}>
+                        {label}
+                        {hint && <span style={{ display: "block", fontSize: "0.72rem", color: "var(--muted)", marginTop: "0.1rem" }}>{hint}</span>}
+                      </span>
+                    </label>
+                  ))}
+                </div>
+              </div>
+            ))}
+
+            <div style={{ borderTop: "1px solid var(--border)", marginTop: "0.5rem", paddingTop: "1.5rem" }}>
+              <div style={{ fontSize: "0.72rem", fontWeight: 700, textTransform: "uppercase", letterSpacing: "0.07em", color: "var(--muted)", marginBottom: "1.25rem" }}>
+                Auswahloptionen konfigurieren
+              </div>
+              <div className="ew-options-grid" style={{ display: "grid", gridTemplateColumns: "repeat(auto-fill, minmax(min(260px, 100%), 1fr))", gap: "1.5rem 2.5rem" }}>
+                <OptionsEditor field="ausstattungOptions"  label="Ausstattung" />
+                <OptionsEditor field="verpflegungOptions"  label="Verpflegung" />
+                <OptionsEditor field="zimmerwunschOptions" label="Zimmerwunsch" />
+                <OptionsEditor field="abrechnungOptions"   label="Abrechnung" />
+                <OptionsEditor field="zahlungOptions"      label="Zahlung" />
+                <OptionsEditor field="anreiseOptions"      label="Anreise" />
+                <OptionsEditor field="budgetOptions"       label="Budgetrahmen" />
+                <OptionsEditor field="quelleOptions"       label="Wie habt ihr uns gefunden?" />
+              </div>
             </div>
           </Section>
         </>
