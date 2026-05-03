@@ -29,15 +29,8 @@ export default function AdminShell({ bookingAppUrl, isSuperAdmin, slugs, activeS
       {open && <div className="ew-nav-backdrop" onClick={() => setOpen(false)} />}
 
       <aside className={`ew-sidebar${open ? " ew-sidebar--open" : ""}`}>
-        <div className="ew-sidebar-brand" style={{ display: "flex", alignItems: "center" }}>
-          {bookingAppUrl ? (
-            <a href={bookingAppUrl} style={{ fontSize: "0.82rem", color: "var(--muted)", textDecoration: "none", fontWeight: 500, display: "flex", alignItems: "center", gap: "0.3rem", flex: 1 }}>
-              <span>←</span> bookingwulf
-            </a>
-          ) : (
-            <span style={{ fontWeight: 700, fontSize: "1.05rem", color: "var(--primary)", letterSpacing: "-0.03em", flex: 1 }}>eventwulf</span>
-          )}
-          <ThemeToggle />
+        <div className="ew-sidebar-brand">
+          <span style={{ fontWeight: 700, fontSize: "1.05rem", color: "var(--primary)", letterSpacing: "-0.03em" }}>eventwulf</span>
         </div>
 
         <nav className="ew-sidebar-nav">
@@ -45,6 +38,14 @@ export default function AdminShell({ bookingAppUrl, isSuperAdmin, slugs, activeS
         </nav>
 
         <div className="ew-sidebar-footer">
+          <div style={{ display: "flex", alignItems: "center" }}>
+            {bookingAppUrl && (
+              <a href={bookingAppUrl} style={{ fontSize: "0.82rem", color: "var(--muted)", textDecoration: "none", fontWeight: 500, display: "flex", alignItems: "center", gap: "0.3rem", flex: 1 }}>
+                <span>←</span> bookingwulf
+              </a>
+            )}
+            <ThemeToggle />
+          </div>
           <LogoutButton />
         </div>
       </aside>
